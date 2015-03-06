@@ -150,4 +150,3 @@ CREATE TABLE ticket (
   FOREIGN KEY (vehicle_id)  REFERENCES vehicle,
   FOREIGN KEY (office_no) REFERENCES people ON DELETE CASCADE
 );
-
