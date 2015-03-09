@@ -22,7 +22,10 @@ while (choice != 6):
 	4:Violation Record
 	5:Search Engine
 	6:Exit""")
-	choice = input("Choice (1-6): ")
+	try:
+		choice = input("Choice (1-6): ")
+	except SyntaxError:
+		choice = 7
 	if choice == 1:
 		newVehicle()
 	elif choice == 2:
