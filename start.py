@@ -7,56 +7,63 @@ def main():
 		user = getpass.getuser()
 	passw = getpass.getpass("Pass:")
 
-	# open up a new connection
-	con = cx_Oracle.connect(user+"/"+passw+"@gwynne.cs.ualberta.ca:1521/CRS")  # lets see if this works!
-	con.autocommit = 1  # un tested I think this is how to change autocommit properties
-
-	curs = con.cursor()
-
-	# old demo code
-
-	# # drop tables if they exist
-	# statement = "drop table movie"
-	# curs.execute(statement)
-	#
-	# # create table statements
-	# statement = "create table movie(title char(20), movie_number integer, primary key(movie_number))"
-	# curs.execute(statement)
-	#
-	# # insert data into tables
-	# statement = "insert into movie values('Chicago', 1)"
-	# curs.execute(statement)
-	#
-	# # make a selection from the data
-	# query = "select title, movie_number from movie"
-	# curs.execute(query)
-	# rows = curs.fetchall()
-
-	# close connection and curs
+	# create a new instance of a connection object
+	sql = SqlConnection(user, passw)
 
 	# Drop & Create Tables
 	print("Dropping / Creating Tables")
-	exicuteFromFile("p1_setup.sql.txt", curs)
+	sql.exicuteFromFile("p1_setup.sql.txt")
 
 	# Populate tables
 	print("Populate Tables")
-	exicuteFromFile("population.txt", curs)
+	sql.exicuteFromFile("population.txt")
 
-	curs.close()
-	con.close()
-
-	# print the selection
-	# print(rows)
+	sql.close()  # clean up sql object
 
 
-def exicuteFromFile(fileName, curs):
-	# may want a try catch in here eventually
-	f = open(fileName)
-	pop = f.read().replace("\n", "").split(";")
-	for t in pop:
-		if (len(t) <= 0):
-			continue
-		curs.execute(t)
-	f.close()
+class SqlConnection:
+	def __init__(self, user, passw):
+		# create the new connection
+		self.con = cx_Oracle.connect(user+"/"+passw+"@gwynne.cs.ualberta.ca:1521/CRS")  # lets see if this works!
+		self.con.autocommit = 1  # un tested I think this is how to change autocommit properties
+
+		self.curs = self.con.cursor()
+
+	def exicuteFromFile(self, fileName):
+		# may want a try catch in here eventually
+		f = open(fileName)
+		pop = f.read().replace("\n", "").split(";")
+		for t in pop:
+			if (len(t) <= 0):
+				continue
+			self.curs.execute(t)
+		f.close()
+
+	def close(self):
+		self.curs.close()
+		self.con.close()
+
 
 main()
+
+# old demo code
+
+# # drop tables if they exist
+# statement = "drop table movie"
+# curs.execute(statement)
+#
+# # create table statements
+# statement = "create table movie(title char(20), movie_number integer, primary key(movie_number))"
+# curs.execute(statement)
+#
+# # insert data into tables
+# statement = "insert into movie values('Chicago', 1)"
+# curs.execute(statement)
+#
+# # make a selection from the data
+# query = "select title, movie_number from movie"
+# curs.execute(query)
+# rows = curs.fetchall()
+
+# close connection and curs
+
