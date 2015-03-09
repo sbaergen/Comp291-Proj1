@@ -1,1 +1,1 @@
-Init Repo
+All programs should be run with Python3!
