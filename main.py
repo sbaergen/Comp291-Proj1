@@ -11,7 +11,10 @@ def main():
 		4:Violation Record
 		5:Search Engine
 		6:Exit""")
-		choice = eval(input("Choice (1-6): "))
+		try:
+			choice = eval(input("Choice (1-6): "))
+		except:
+			choice = 7  # Will cause a loop back to get new entry (choice was invalid)
 		if choice == 1:
 			newVehicle()
 		elif choice == 2:
@@ -27,7 +30,6 @@ def main():
 		else:
 			print ("You are an idiot")
 		print (choice)
-
 # This will display the menu and handle input to the menu
 def newVehicle():
 	return
