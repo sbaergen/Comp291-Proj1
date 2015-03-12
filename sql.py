@@ -12,11 +12,11 @@ def main():
 
 	# Drop & Create Tables
 	print("Dropping / Creating Tables")
-	sql.exicuteFromFile("p1_setup.sql.txt")
+	sql.executeFromFile("p1_setup.sql.txt")
 
 	# Populate tables
 	print("Populate Tables")
-	sql.exicuteFromFile("population.txt")
+	sql.executeFromFile("population.txt")
 
 	sql.close()  # clean up sql object
 
@@ -29,10 +29,13 @@ class SqlConnection:
 
 		self.curs = self.con.cursor()
 
-	def exicute(self, statement):
-		self.curs.execute(statement)
+	def execute(self, statement):
+		return self.curs.execute(statement)
 
-	def exicuteFromFile(self, fileName):
+	def exeAndFetch(self, statement):
+		return self.curs.execute(statement).fetchall()
+
+	def executeFromFile(self, fileName):
 		# may want a try catch in here eventually
 		f = open(fileName)
 		pop = f.read().replace("\n", "").split(";")
@@ -41,6 +44,7 @@ class SqlConnection:
 				continue
 			self.curs.execute(t)
 		f.close()
+		return None
 
 	def close(self):
 		self.curs.close()

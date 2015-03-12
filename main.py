@@ -14,11 +14,11 @@ def main():
 
 	# Drop & Create Tables
 	print("Dropping / Creating Tables")
-	sql.exicuteFromFile("p1_setup.sql.txt")
+	sql.executeFromFile("p1_setup.sql.txt")
 
 	# Populate tables
 	print("Populate Tables")
-	sql.exicuteFromFile("population.txt")
+	sql.executeFromFile("population.txt")
 
 	print ("Welcome to the Alberta Auto Registration System!")
 	choice = 7
@@ -74,44 +74,55 @@ def newVehicle(sql):
 	year = input("Enter the year of the vehicle: ")
 	color = input("Enter the color of the vehicle: ")
 	vehicleType = eval(input("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): "))
-	# todo: lets check all of the params
-	string = "insert into vehicle values ('{:s}','{:s}','{:s}','{:s}','{:s}',{:d})".format(serial_no, maker, model, year, color, vehicleType)
-	print("debugging: " + string)
-	sql.exicute(string)
 
-	return
-#
-#	Continue = True
-#	While Continue:
-#	Owner = input("Enter the owner id of the owner of the vehicle: ")
-#	if empty Query(SELECT o.owner_id FROM owner o, vehicle v WHERE o.owner_id = Owner and o.vehicle_id = Serial_no;):
-#		Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
-#		Insert into owner values(Owner,Serial_no,Primary_Ownership);
-#
-#		if empty Query(Select * FROM person p WHERE p.sin = Owner):
-#			Sin = input("Enter the sin of the owner: ")
-#			Name = input("Enter the name of the owner: ")
-#			Height = input("Enter the height of the owner: ")
-#			Weight = input("Enter the weight of the owner: ")
-#			Eyecolor = input("Enter the eye color of the owner: ")
-#			Haircolor = input("Enter the hair color of the owner: ")
-#			Address = input("Enter the address of the owner: ")
-#			Gender = input("Enter the gender of the owner: ")
-#			Birthday = input("Enter the birthday of the owner: ")
-#			Insert into people values (Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday);
-#
-#			Done = False
-#			While not Done:
-#			Continue = input("Add another owner? (y/n): ")
-#			if Continue == 'y' or Continue == 'Y':
-#			Continue = True
-#			Done = True
-#			elif Continue =='n' or Continue == 'N':
-#			Continue = False
-#			Done = True
-#			else:
-#			print("Invalid input, please enter either the letter y or n")
-#	return
+	# todo: lets check all of the params
+
+	string = "insert into vehicle values('{:s}','{:s}','{:s}','{:s}','{:s}',{:d})"
+	string = string.format(serial_no, maker, model, year, color, vehicleType)
+	print(string)  # debugging
+	sql.execute(string)
+
+	print("past part one")  # debugging
+
+	Continue = True
+	while Continue: # todo: the owner doesn't exist because we just created this vehicle out of thin air... fix this...
+		Owner = input("Enter the owner id of the owner of the vehicle: ")
+		temp = sql.exeAndFetch("SELECT o.owner_id FROM owner o, WHERE o.owner_id = {:s} and o.vehicle_id = {:s}".format(Owner, serial_no))
+		print(str(type(temp)) + " " + str(temp))  # debugging
+		print(temp)  # debugging
+		if len(temp) == 0:  # todo: this line isn't working correctly.. what is the ret val?
+			Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
+			# Insert into owner values(Owner,Serial_no,Primary_Ownership);
+			string = "insert into vehicle values ('{:s}','{:s}','{:s}')"
+			string = string.format(Owner, serial_no, Primary_Ownership)
+			sql.execute(string)
+
+			if (sql.exeAndFetch("Select * FROM person p WHERE p.sin = {:s}").format(Owner)) == 0:
+				Sin = input("Enter the sin of the owner: ")
+				Name = input("Enter the name of the owner: ")
+				Height = input("Enter the height of the owner: ")
+				Weight = input("Enter the weight of the owner: ")
+				Eyecolor = input("Enter the eye color of the owner: ")
+				Haircolor = input("Enter the hair color of the owner: ")
+				Address = input("Enter the address of the owner: ")
+				Gender = input("Enter the gender of the owner: ")
+				Birthday = input("Enter the birthday of the owner: ")
+				string = "Insert into people values ({:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s})"
+				sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+
+				Done = False
+				while not Done:
+					Continue = input("Add another owner? (y/n): ")
+					if Continue == 'y' or Continue == 'Y':
+						Continue = True
+						Done = True
+					elif Continue =='n' or Continue == 'N':
+						Continue = False
+						Done = True
+					else:
+						print("Invalid input, please enter either the letter y or n")
+		else:
+			Continue = False
 
 def autoTrans(sql):
 	return
