@@ -1,0 +1,17 @@
+#This component is used by the police officer to issue a traffic ticket and record the violation
+#You may also assume that all the information about ticket type is pre-loaded into the system
+
+date = input("Enter the date of the violation(YYYY-MM-DD): ")
+place = input("Enter the location of the infraction: ")
+violator = input("Enter the sin of the violator: ")
+vehicle = input("Enter the serial number of the vehicle : ")
+office = input("Enter the office number: ")
+type = input("Enter the type of ticket: ")
+descr = input("Enter a detailed description of the offence: ")
+
+ticket_no = 1 + (Select Max(t.ticket_no) From ticket t Group By t.ticket_no)
+
+insert into ticket values(ticket_no,violator,vehicle,office,type,date,place,descr)
+
+#ERROR HANDLING
+#CHECK SUMMATION IN ticket_no
