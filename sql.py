@@ -29,6 +29,9 @@ class SqlConnection:
 
 		self.curs = self.con.cursor()
 
+	def exicute(self, statement):
+		self.curs.execute(statement)
+
 	def exicuteFromFile(self, fileName):
 		# may want a try catch in here eventually
 		f = open(fileName)
