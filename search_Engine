@@ -1,0 +1,46 @@
+#Component used to perform following searches
+#1 List the name, licence_no, addr, birthday, class, driving_condition and expiry_date
+#of a driver by entering either LICENCE_NO or NAME (display all entries if duplicate names)
+#2 List all violation records recieved by a person if LICENCE_NO or SIN given
+#3 Print out vehicle histroy, including number of times the vehicle has changed hands,
+#average sale price, number of violations involved in given SERIAL_NO
+
+print("1.Personal Information Search")
+print("2.Personal Violation Record")
+print("3.Vehicle history")
+print("quit (q)")
+
+choice = input("Choose a search type number: ")
+
+While choice.lower() != q:
+      if choice == 1:
+      	 search1()
+
+      elif choice == 2:
+         search2()
+
+      elif choice == 3:
+      	 search3()
+
+      else:
+         print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+	 choice = input("Choose a search type number: ")
+
+def search1():
+    criteria = input("Enter a licence_no or name: ")
+    type = None
+    try:
+	 eval(criteria)
+	 type = "licence_no"
+    except:
+	 type = "name"
+
+    if type == "name":
+       	 do something
+
+    else:
+	 do something else
+
+def search2():
+
+def search3():	 
