@@ -46,9 +46,6 @@ class SqlConnection:
 		self.curs.close()
 		self.con.close()
 
-
-main()
-
 # old demo code
 
 # # drop tables if they exist
