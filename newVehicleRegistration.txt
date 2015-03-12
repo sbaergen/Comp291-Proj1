@@ -40,6 +40,3 @@ While Continue:
             Done = True
         else:
             print("Invalid input, please enter either the letter y or n")
-        
-
-                              
