@@ -12,7 +12,7 @@ Seller = input("Enter the sin of the seller: ")
 Date = input("Enter the date of the transaction: ")
 Price = input("Enter the price the vehicle was sold for ($): ")
 
-Transaction_id = Query(Select Max(s.transaction_id) From auto_sale s Group By s.transaction_id)
+Transaction_id = 1 + Query(Select Max(s.transaction_id) From auto_sale s Group By s.transaction_id)
 
 insert into auto_sale values(Transaction_id, Seller, Buyer, Vehicle, Date, Price)
 delete from owner where (owner_id != Buyer and vehicle_id = Vehicle)

@@ -6,12 +6,12 @@ place = input("Enter the location of the infraction: ")
 violator = input("Enter the sin of the violator: ")
 vehicle = input("Enter the serial number of the vehicle : ")
 office = input("Enter the office number: ")
-type = input("Enter the type of ticket: ")
+typeTicket = input("Enter the type of ticket: ")
 descr = input("Enter a detailed description of the offence: ")
 
 ticket_no = 1 + (Select Max(t.ticket_no) From ticket t Group By t.ticket_no)
 
-insert into ticket values(ticket_no,violator,vehicle,office,type,date,place,descr)
+insert into ticket values(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
 
 #ERROR HANDLING
 #CHECK SUMMATION IN ticket_no

@@ -12,7 +12,7 @@ print("quit (q)")
 
 choice = input("Choose a search type number: ")
 
-While choice.lower() != q:
+while choice.lower() != q:
       if choice == 1:
       	 search1()
 

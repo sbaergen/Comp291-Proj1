@@ -2,7 +2,7 @@
 #This includes personal information and a picture of the driver
 #Assume all image files are stored in a local disk system
 
-Licence_no = 1+(Select Max(d.licence_no) From drive_licence d)
+Licence_no = 1 + (Select Max(d.licence_no) From drive_licence d)
 Person = input("Enter the sin of the person: ")
 Class = input("Enter the class of driving licence of the person: ")
 Issuing_date = input("Enter the date of issue: ")
@@ -10,7 +10,7 @@ Expiry_date = input("Enter the date of expiry: ")
 File_name = input("Enter the name of the picture file to be added: ")
 
 import Image
-Picture = Image.open(File_name)
+Picture = Image.open(File_name)  # File_name should be path to the file
 
 insert into drive_licence values(Licence_no,Person,Class,Picture,Issuing_date,Expiry_date)
 
