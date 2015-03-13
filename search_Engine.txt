@@ -36,10 +36,9 @@ def search1():
 	 type = "name"
 
     if type == "name":
-       	 do something
-
+       	 Results = (Select p.name, d.licence_no, p.addr, p.birthday, d.class, d.did, r From people p Where p.name = criteria)
     else:
-	 do something else
+	 
 
 def search2():
 
