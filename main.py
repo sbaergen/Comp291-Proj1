@@ -83,42 +83,37 @@ def newVehicle(sql):
 
         addOwner = True
         while addOwner:
+		# need to check here if the vehicle already has a primary owner
+		Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
+		# check for valid input of y or n, also in SQL is it upper or lower y/n?
                 Owner = input("Enter the owner id of the owner of the vehicle: ")
+
+		string = "insert into owner values ('{:s}','{:s}','{:s}')"
+		string = string.format(Owner, serial_no, Primary_Ownership)
+		sql.execute(string)
+
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
+                if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
+			Sin = input("Enter the sin of the owner: ")
+			Name = input("Enter the name of the owner: ")
+			Height = input("Enter the height of the owner: ")
+			Weight = input("Enter the weight of the owner: ")
+			Eyecolor = input("Enter the eye color of the owner: ")
+			Haircolor = input("Enter the hair color of the owner: ")
+			Address = input("Enter the address of the owner: ")
+			Gender = input("Enter the gender of the owner: ")
+			Birthday = input("Enter the birthday of the owner: ")
+			string = "Insert into people values ({:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s})"
+			sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 
-                if len(sql.exeAndFetch(string)) == 0:  # check if the owner exists, if not add them
-                        string = "insert into vehicle values ('{:s}','{:s}','{:s}')"
-                        string = string.format(Owner, serial_no, Primary_Ownership)
-                        sql.execute(string)
-
-                        if (sql.exeAndFetch("Select * FROM person p WHERE p.sin = {:s}").format(Owner)) == 0:  # check if the person exists
-                                Sin = input("Enter the sin of the owner: ")
-                                Name = input("Enter the name of the owner: ")
-                                Height = input("Enter the height of the owner: ")
-                                Weight = input("Enter the weight of the owner: ")
-                                Eyecolor = input("Enter the eye color of the owner: ")
-                                Haircolor = input("Enter the hair color of the owner: ")
-                                Address = input("Enter the address of the owner: ")
-                                Gender = input("Enter the gender of the owner: ")
-                                Birthday = input("Enter the birthday of the owner: ")
-                                string = "Insert into people values ({:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s})"
-                                sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
-
-                # need to check here if the vehicle already has an owner
-                Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
-                # check for valid input of y or n
-                # Insert into owner values(Owner,Serial_no,Primary_Ownership);  # todo: sql statement not actually exicuted
-
-
-                validInput = False
-                while not Done:
+                while True:
                         addMore = input("Add another owner? (y/n): ")
                         if lower(addMore) == 'y':
                                 addOwner = True
-                                validInput = True
+				break
                         elif lower(addMore) =='n':
                                 addOwner = False
-                                validInput = True
+				break
                         else:
                                 print("Invalid input, please enter either the letter y or n")
 
