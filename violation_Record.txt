@@ -9,8 +9,11 @@ office = input("Enter the office number: ")
 typeTicket = input("Enter the type of ticket: ")
 descr = input("Enter a detailed description of the offence: ")
 
-ticket_no = 1 + (Select Max(t.ticket_no) From ticket t Group By t.ticket_no)
+#This must find the greatest ticket number already in ticket and increase it by one to create a 
+#valid new ticket id for the newly created ticket
+ticket_no = 1 + Query(Select Max(t.ticket_no) From ticket t Group By t.ticket_no)
 
+#This simply inserts the ticket into our database
 insert into ticket values(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
 
 #ERROR HANDLING
