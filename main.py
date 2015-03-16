@@ -21,27 +21,26 @@ def main():
         sql.executeFromFile("population.txt")
 
         print ("Welcome to the Alberta Auto Registration System!")
-        choice = 7
-        while (choice != 6):
-                print ("----------------------------------------")
-                print ("""Please Select from the following:
+        while(True):
+                print (
+"""----------------------------------------
+Please Select from the following:
                 1:New Vehicle Registration
                 2:Auto Transaction
                 3:Driver Licence Registration
                 4:Violation Record
                 5:Search Engine
                 6:Exit""")
-                choice = 7
-                while (choice == 7):
+                choice = None
+                while(True):
                         try:
                                 choice = eval(input("Choice (1-6): "))
                                 if (not (choice >= 1 and choice <=6)):
-                                        choice = 7  # Will cause a loop back to get new entry (choice was invalid)
                                         print ("Invalid Input!", end = " ")
+                                else:
+                                        break
                         except:
-                                choice = 7  # Will cause a loop back to get new entry (choice was invalid)
                                 print ("Invalid Input!", end = " ")
-
                 if choice == 1:
                         newVehicle(sql)
                 elif choice == 2:
@@ -55,9 +54,10 @@ def main():
                 elif choice == 6:
                         break
                 else:
-                        choice = 7  # Will cause a loop back to get new entry (choice was invalid)
+                        continue
                         print ("Invalid Input!", end = " ")
                         print (choice)
+                
 
         sql.close()  # clean up sql object
 
@@ -99,9 +99,8 @@ def newVehicle(sql):
                         Address = input("Enter the address of the owner: ")
                         Gender = input("Enter the gender of the owner: ")
                         Birthday = input("Enter the birthday of the owner in form 'YYYY-MM-DD': ")
-                        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))".format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday)
-                        print(string)
-                        sql.execute(string)
+                        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
+                        sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 
                 string = "insert into owner values ('{:s}','{:s}','{:s}')"
                 string = string.format(Owner, serial_no, Primary_Ownership)
