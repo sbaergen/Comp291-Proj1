@@ -88,30 +88,31 @@ def newVehicle(sql):
                 # check for valid input of y or n, also in SQL is it upper or lower y/n?
                 Owner = input("Enter the owner id of the owner of the vehicle: ")
 
-                string = "insert into owner values ('{:s}','{:s}','{:s}')"
-                string = string.format(Owner, serial_no, Primary_Ownership)
-                sql.execute(string)
-
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
                         Sin = input("Enter the sin of the owner: ")
                         Name = input("Enter the name of the owner: ")
-                        Height = input("Enter the height of the owner: ")
-                        Weight = input("Enter the weight of the owner: ")
+                        Height = eval(input("Enter the height of the owner: "))
+                        Weight = eval(input("Enter the weight of the owner: "))
                         Eyecolor = input("Enter the eye color of the owner: ")
                         Haircolor = input("Enter the hair color of the owner: ")
                         Address = input("Enter the address of the owner: ")
                         Gender = input("Enter the gender of the owner: ")
-                        Birthday = input("Enter the birthday of the owner: ")
-                        string = "Insert into people values ({:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s},{:s})"
-                        sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+                        Birthday = input("Enter the birthday of the owner in form 'YYYY-MM-DD': ")
+                        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))".format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday)
+                        print(string)
+                        sql.execute(string)
+
+                string = "insert into owner values ('{:s}','{:s}','{:s}')"
+                string = string.format(Owner, serial_no, Primary_Ownership)
+                sql.execute(string)
 
                 while True:
                         addMore = input("Add another owner? (y/n): ")
-                        if lower(addMore) == 'y':
+                        if addMore.lower() == 'y':
                                 addOwner = True
                                 break
-                        elif lower(addMore) =='n':
+                        elif addMore.lower() =='n':
                                 addOwner = False
                                 break
                         else:
