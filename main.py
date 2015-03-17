@@ -4,13 +4,21 @@ import sql as sqlFile
 # This will display the menu and handle input to the menu
 def main():
         print("Please login before proceeding.")
-        user = input("User [%s]:" % getpass.getuser())
-        if not user:
-                user = getpass.getuser()
-        passw = getpass.getpass("Pass:")
+        sql = None  # I don't want the sql obj to be local to the while loop
+        while(True):  # cont here
+                try:
+                        user = input("User [%s]:" % getpass.getuser())
+                        if not user:
+                                user = getpass.getuser()
+                        passw = getpass.getpass("Pass:")
 
-        # create a new instance of a connection object
-        sql = sqlFile.SqlConnection(user, passw)
+                        # create a new instance of a connection object
+                        sql = sqlFile.SqlConnection(user, passw)
+
+                        break
+                except:
+                        print("Oops, try again!")
+                        continue
 
         # Drop & Create Tables
         print("Dropping / Creating Tables")
