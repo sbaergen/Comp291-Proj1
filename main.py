@@ -118,7 +118,27 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-        return
+	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
+	Buyer = input("Enter the sin of the buyer: ")
+	Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")
+	Seller = input("Enter the sin of the seller: ")
+	Date = input("Enter the date of the transaction: ")
+	Price = input("Enter the price the vehicle was sold for ($): ")
+	
+	string = "SELECT MAX(transaction_id) FROM auto_sale s GROUP BY s.transaction_id"
+	TransactionId = sql.exeAndFetch(string) + 1
+
+	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:2f}')"
+	string = string.format(Transaction_id, Seller, Buyer, Vehicle, Date, Price)
+	sql.execute(string)
+#This is probably wrong
+	string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})".format(Buyer, Vehicle)
+	sql.execute(string)
+#Method 1
+	string = "insert into owner values('{:s}','{:s}','{:c}')
+	string = string.format(Buyer, Vehicle, 'Y')
+	sql.execute(string)	
+	return
 
 def licenceReg(sql):
         return
