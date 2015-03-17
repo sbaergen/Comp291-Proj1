@@ -7,7 +7,7 @@ def main():
         user = input("User [%s]:" % getpass.getuser())
         if not user:
                 user = getpass.getuser()
-                passw = getpass.getpass("Pass:")
+        passw = getpass.getpass("Pass:")
 
         # create a new instance of a connection object
         sql = sqlFile.SqlConnection(user, passw)
@@ -123,9 +123,24 @@ def autoTrans(sql):
 def licenceReg(sql):
         return
 
+#This component is used by the police officer to issue a traffic ticket and record the violation
+#You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
-        return
-
+        ticket_no = 1 + sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  # create a unique ticket so sql doen't complain
+        violator = input("Enter the sin of the violator: ")
+        vehicle = input("Enter the serial number of the vehicle : ")
+        office = input("Enter the office number: ")
+        typeTicket = input("Enter the type of ticket: ")
+        date = input("Enter the date of the violation(YYYY-MM-DD): ")
+        place = input("Enter the location of the infraction: ")
+        descr = input("Enter a detailed description of the offence: ")
+        
+        #This simply inserts the ticket into our database
+        string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
+        string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
+        print(string)  # debugging
+        sql.execute(string)
+        
 def searchEngine(sql):
         return
 
