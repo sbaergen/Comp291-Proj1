@@ -1,6 +1,6 @@
 import getpass
 import sql as sqlFile
-import Image
+#import Image
 
 # This will display the menu and handle input to the menu
 def main():
@@ -126,17 +126,19 @@ def autoTrans(sql):
     Date = input("Enter the date of the transaction: ")
     Price = input("Enter the price the vehicle was sold for ($): ")
 	
-    string = "SELECT MAX(transaction_id) FROM auto_sale s GROUP BY s.transaction_id"
-    TransactionId = sql.exeAndFetch(string) + 1
+    string = "SELECT MAX(transaction_id) FROM auto_sale s"
+    TransactionId = sql.exeAndFetch(string)[0][0] + 1
 
-    string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:2f}')"
-    string = string.format(Transaction_id, Seller, Buyer, Vehicle, Date, Price)
+    string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:s}')"
+    string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
+    print(string)
     sql.execute(string)
-#This is probably wrong
+#This line crashes
     string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})".format(Buyer, Vehicle)
+    print(string)
     sql.execute(string)
 #Method 1
-    string = "insert into owner values('{:s}','{:s}','{:c}')"
+    string = "insert into owner values('{:s}','{:s}','{:s}')"
     string = string.format(Buyer, Vehicle, 'Y')
     sql.execute(string)	
     return
