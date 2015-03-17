@@ -1,5 +1,6 @@
 import getpass
 import sql as sqlFile
+import Image
 
 # This will display the menu and handle input to the menu
 def main():
@@ -118,30 +119,44 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
-	Buyer = input("Enter the sin of the buyer: ")
-	Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")
-	Seller = input("Enter the sin of the seller: ")
-	Date = input("Enter the date of the transaction: ")
-	Price = input("Enter the price the vehicle was sold for ($): ")
+    Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
+    Buyer = input("Enter the sin of the buyer: ")
+    Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")
+    Seller = input("Enter the sin of the seller: ")
+    Date = input("Enter the date of the transaction: ")
+    Price = input("Enter the price the vehicle was sold for ($): ")
 	
-	string = "SELECT MAX(transaction_id) FROM auto_sale s GROUP BY s.transaction_id"
-	TransactionId = sql.exeAndFetch(string) + 1
+    string = "SELECT MAX(transaction_id) FROM auto_sale s GROUP BY s.transaction_id"
+    TransactionId = sql.exeAndFetch(string) + 1
 
-	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:2f}')"
-	string = string.format(Transaction_id, Seller, Buyer, Vehicle, Date, Price)
-	sql.execute(string)
+    string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:2f}')"
+    string = string.format(Transaction_id, Seller, Buyer, Vehicle, Date, Price)
+    sql.execute(string)
 #This is probably wrong
-	string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})".format(Buyer, Vehicle)
-	sql.execute(string)
+    string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})".format(Buyer, Vehicle)
+    sql.execute(string)
 #Method 1
-	string = "insert into owner values('{:s}','{:s}','{:c}')
-	string = string.format(Buyer, Vehicle, 'Y')
-	sql.execute(string)	
-	return
+    string = "insert into owner values('{:s}','{:s}','{:c}')"
+    string = string.format(Buyer, Vehicle, 'Y')
+    sql.execute(string)	
+    return
 
 def licenceReg(sql):
-        return
+    string = "SELECT MAX(d.licence_no) FROM drive_licence d)"
+    Licence_no = 1 + sql.exeAndFetch(string)
+    
+    Person = input("Enter the sin of the person: ")
+    Class = input("Enter the class of driving licence of the person: ")
+    Issuing_date = input("Enter the date of issue: ")
+    Expiry_date = input("Enter the date of expiry: ")
+    File_name = input("Enter the name of the picture file to be added: ")    
+    
+    Picture = Image.open(File_name)
+
+    string = "insert into drive_licence values ({:d},'{:s}','{:s}', '{:s}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
+    string = string.format(Licence_no,Person,Class,Picture,Issuing_date,Expiry_date)
+    sql.execute(string)
+    return
 
 def violationRec(sql):
         return
