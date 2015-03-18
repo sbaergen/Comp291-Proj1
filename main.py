@@ -143,12 +143,19 @@ def autoTrans(sql):
 	print(string)
 	sql.execute(string)
 #This line crashes
+<<<<<<< Updated upstream
 	string = "insert into owner values('{:s}','{:s}','{:s}')".format('112112112', '1001', 'y')
 	sql.execute(string)
 	string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})"
 	string = string.format(Buyer, Vehicle)
 	print(string)
 	sql.execute(string)
+=======
+    string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})"
+    string = string.format(Buyer, Vehicle)
+    print(string)
+    sql.execute(string)
+>>>>>>> Stashed changes
 #Method 1
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
 	string = string.format(Buyer, Vehicle, 'Y')
