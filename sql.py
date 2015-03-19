@@ -25,7 +25,7 @@ class SqlConnection:
         def __init__(self, user, passw):
                 # create the new connection
                 self.con = cx_Oracle.connect(user+"/"+passw+"@gwynne.cs.ualberta.ca:1521/CRS")  # lets see if this works!
-                self.con.autocommit = 1  # un tested I think this is how to change autocommit properties
+                self.con.autocommit = 1  # save the changes we make
 
                 self.curs = self.con.cursor()
 
@@ -45,6 +45,12 @@ class SqlConnection:
                         self.curs.execute(t)
                 f.close()
                 return None
+
+        def commitOff(self):
+                self.con.autocommit = 0
+
+        def commitOn(self):
+                self.con.autocommit = 1
 
         def close(self):
                 self.curs.close()
@@ -70,4 +76,3 @@ class SqlConnection:
 # rows = curs.fetchall()
 
 # close connection and curs
-

@@ -30,6 +30,10 @@ def main():
         print("Populate Tables")
         sql.executeFromFile("population.txt")
 
+        # the test worked here.. now for auto transaction
+        # print("teting delete here:")
+        # sql.execute("delete from owner where (owner_id = '121121121' and vehicle_id = '1020')")
+
         print ("Welcome to the Alberta Auto Registration System!")
         while(True):
                 print (
@@ -138,20 +142,27 @@ def autoTrans(sql):
 	string = "SELECT MAX(transaction_id) FROM auto_sale s"
 	TransactionId = sql.exeAndFetch(string)[0][0] + 1
 
+	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
+	string = string.format(Seller, Vehicle)
+	print(string)
+	sql.execute(string)
+
 	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:s}')"
 	string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
 	print(string)
 	sql.execute(string)
-#This line crashes
-	string = "insert into owner values('{:s}','{:s}','{:s}')".format(Buyer,Vehicle, 'y')
-	sql.execute(string)
-	string = "delete from owner where (owner_id = {:s} and vehicle_id = {:s})"
+
+        # the line below still isn't working!!
+	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
 	string = string.format(Seller, Vehicle)
 	print(string)
 	sql.execute(string)
-#Method 1
+
+	string = "insert into owner values('{:s}','{:s}','{:s}')".format(Buyer,Vehicle, 'y')
+	sql.execute(string)
+
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
-	string = string.format(Buyer, Vehicle, 'Y')
+	string = string.format(Buyer, Vehicle, 'y')
 	sql.execute(string)
 	sql.execute(string)
 	return
