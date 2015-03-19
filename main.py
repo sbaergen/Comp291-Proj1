@@ -67,13 +67,13 @@ Please Select from the following:
                         continue
                         print ("Invalid Input!", end = " ")
                         print (choice)
-                
+
 
         sql.close()  # clean up sql object
 
 
 
-# Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner. 
+# Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner.
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
@@ -130,11 +130,11 @@ def newVehicle(sql):
 def autoTrans(sql):
 	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
 	Buyer = input("Enter the sin of the buyer: ")
-	Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")
+	## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
 	Seller = input("Enter the sin of the seller: ")
-	Date = input("Enter the date of the transaction: ")
+	Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
 	Price = input("Enter the price the vehicle was sold for ($): ")
-	
+
 	string = "SELECT MAX(transaction_id) FROM auto_sale s"
 	TransactionId = sql.exeAndFetch(string)[0][0] + 1
 
@@ -143,16 +143,17 @@ def autoTrans(sql):
 	print(string)
 	sql.execute(string)
 #This line crashes
-	string = "insert into owner values('{:s}','{:s}','{:s}')".format('112112112', '1001', 'y')
+	string = "insert into owner values('{:s}','{:s}','{:s}')".format(Buyer,Vehicle, 'y')
 	sql.execute(string)
-	string = "delete from owner where (owner_id != {:s} and vehicle_id = {:s})"
-	string = string.format(Buyer, Vehicle)
+	string = "delete from owner where (owner_id = {:s} and vehicle_id = {:s})"
+	string = string.format(Seller, Vehicle)
 	print(string)
 	sql.execute(string)
 #Method 1
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
 	string = string.format(Buyer, Vehicle, 'Y')
-	sql.execute(string)	
+	sql.execute(string)
+	sql.execute(string)
 	return
 
 def licenceReg(sql):
@@ -160,13 +161,13 @@ def licenceReg(sql):
 	print (string)
 	Licence_no = int(sql.exeAndFetch(string)[0][0]) + 1
 	print(Licence_no)
-    
+
 	Person = input("Enter the sin of the person: ")
 	Class = input("Enter the class of driving licence of the person: ")
 	Issuing_date = input("Enter the date of issue: ")
 	Expiry_date = input("Enter the date of expiry: ")
-	File_name = input("Enter the name of the picture file to be added: ")    
-# From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15	
+	File_name = input("Enter the name of the picture file to be added: ")
+# From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15
 	#Picture = open(File_name, "rb")
 	#Picture = Picture.read(16)
 	#print "%s" % (binascii.hexlify(Picture))
@@ -187,13 +188,13 @@ def violationRec(sql):
         date = input("Enter the date of the violation(YYYY-MM-DD): ")
         place = input("Enter the location of the infraction: ")
         descr = input("Enter a detailed description of the offence: ")
-        
+
         #This simply inserts the ticket into our database
         string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
         string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
         print(string)  # debugging
         sql.execute(string)
-        
+
 def searchEngine(sql):
 print("1.Personal Information Search")
 print("2.Personal Violation Record")
