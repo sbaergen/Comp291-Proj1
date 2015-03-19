@@ -196,15 +196,15 @@ def violationRec(sql):
         sql.execute(string)
 
 def searchEngine(sql):
-print("1.Personal Information Search")
-print("2.Personal Violation Record")
-print("3.Vehicle history")
-print("quit (q)")
+    print("1.Personal Information Search")
+    print("2.Personal Violation Record")
+    print("3.Vehicle history")
+    print("quit (q)")
 
-choice = input("Choose a search type number: ")
+    choice = input("Choose a search type number: ")
 
-while choice.lower() != 'q':
-	if choice == 1:
+    while choice.lower() != 'q':
+    	if choice == 1:
 		search1()
 
 	elif choice == 2:
