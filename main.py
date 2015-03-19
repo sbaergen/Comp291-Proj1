@@ -1,5 +1,7 @@
 import getpass
 import sql as sqlFile
+import os,sys
+#import Image
 
 # This will display the menu and handle input to the menu
 def main():
@@ -65,13 +67,13 @@ Please Select from the following:
                         continue
                         print ("Invalid Input!", end = " ")
                         print (choice)
-                
+
 
         sql.close()  # clean up sql object
 
 
 
-# Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner. 
+# Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner.
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
@@ -126,10 +128,53 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-        return
+	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
+	Buyer = input("Enter the sin of the buyer: ")
+	## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
+	Seller = input("Enter the sin of the seller: ")
+	Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
+	Price = input("Enter the price the vehicle was sold for ($): ")
+
+	string = "SELECT MAX(transaction_id) FROM auto_sale s"
+	TransactionId = sql.exeAndFetch(string)[0][0] + 1
+
+	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:s}')"
+	string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
+	print(string)
+	sql.execute(string)
+#This line crashes
+	string = "insert into owner values('{:s}','{:s}','{:s}')".format(Buyer,Vehicle, 'y')
+	sql.execute(string)
+	string = "delete from owner where (owner_id = {:s} and vehicle_id = {:s})"
+	string = string.format(Seller, Vehicle)
+	print(string)
+	sql.execute(string)
+#Method 1
+	string = "insert into owner values('{:s}','{:s}','{:s}')"
+	string = string.format(Buyer, Vehicle, 'Y')
+	sql.execute(string)
+	return
 
 def licenceReg(sql):
-        return
+	string = "SELECT MAX(licence_no) FROM drive_licence"
+	print (string)
+	Licence_no = int(sql.exeAndFetch(string)[0][0]) + 1
+	print(Licence_no)
+
+	Person = input("Enter the sin of the person: ")
+	Class = input("Enter the class of driving licence of the person: ")
+	Issuing_date = input("Enter the date of issue: ")
+	Expiry_date = input("Enter the date of expiry: ")
+	File_name = input("Enter the name of the picture file to be added: ")
+# From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15
+	#Picture = open(File_name, "rb")
+	#Picture = Picture.read(16)
+	#print "%s" % (binascii.hexlify(Picture))
+	Picture = 0xFF
+	string = "insert into drive_licence values ({:d},'{:s}','{:s}', '{:d}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
+	string = string.format(Licence_no,Person,Class,Picture,Issuing_date,Expiry_date)
+	sql.execute(string)
+	return
 
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
@@ -142,14 +187,14 @@ def violationRec(sql):
         date = input("Enter the date of the violation(YYYY-MM-DD): ")
         place = input("Enter the location of the infraction: ")
         descr = input("Enter a detailed description of the offence: ")
-        
+
         #This simply inserts the ticket into our database
         string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
         string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
         print(string)  # debugging
         sql.execute(string)
-        
+
 def searchEngine(sql):
-        return
+	return
 
 main()  # run the main function
