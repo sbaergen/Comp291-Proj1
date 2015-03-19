@@ -153,6 +153,7 @@ def autoTrans(sql):
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
 	string = string.format(Buyer, Vehicle, 'Y')
 	sql.execute(string)
+	sql.execute(string)
 	return
 
 def licenceReg(sql):
