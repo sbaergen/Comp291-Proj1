@@ -154,24 +154,26 @@ def autoTrans(sql):
 	string = string.format(Buyer, Vehicle, 'y')
 	sql.execute(string)
 
+# I will add a person with sin = 131131131 to use for tesing w/ this function
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
-	print (string)
-	Licence_no = int(sql.exeAndFetch(string)[0][0]) + 1
-	print(Licence_no)
+	print (string + " is now ...")  # debugging
+	Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1
+	print(Licence_no)  # debugging
 
 	Person = input("Enter the sin of the person: ")
 	Class = input("Enter the class of driving licence of the person: ")
-	Issuing_date = input("Enter the date of issue: ")
-	Expiry_date = input("Enter the date of expiry: ")
-	File_name = input("Enter the name of the picture file to be added: ")
+	Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ")
+	Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ")
+	File_name = input("Enter the path to the picture: ")  # currently not used
 # From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15
 	#Picture = open(File_name, "rb")
 	#Picture = Picture.read(16)
 	#print "%s" % (binascii.hexlify(Picture))
-	Picture = 0xFF
-	string = "insert into drive_licence values ({:d},'{:s}','{:s}', '{:d}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
-	string = string.format(Licence_no,Person,Class,Picture,Issuing_date,Expiry_date)
+	Picture = 0xFF  # testing with a statick picture? ..
+	string = "insert into drive_licence values ('{:s}','{:s}','{:s}', '{:d}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
+	string = string.format(str(Licence_no),Person,Class,Picture,Issuing_date,Expiry_date)
+	print (string)  # debugging
 	sql.execute(string)
 	return
 
