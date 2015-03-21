@@ -131,41 +131,38 @@ def newVehicle(sql):
                         else:
                                 print("Invalid input, please enter either the letter y or n")
 
+def autoTransNew(sql):
+        vehicle = input("Enter serial # of the vehicle in the auto transaction: ")
+        buyer = input("Enter the sin of the buyer: ")  # we may want more buyers in the future!
+        seller = input("Enter the sin of the seller: ")  # we may want more sellers in the future!
+        date = input("Enter the date 'YYYY-MM-DD': ")
+        price = input("Enter the price the vehicle was sold for ($): ")
+
 def autoTrans(sql):
 	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
 	Buyer = input("Enter the sin of the buyer: ")
 	## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
 	Seller = input("Enter the sin of the seller: ")
 	Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
-	Price = input("Enter the price the vehicle was sold for ($): ")
+	Price = eval(input("Enter the price the vehicle was sold for ($): "))
 
 	string = "SELECT MAX(transaction_id) FROM auto_sale s"
-	TransactionId = sql.exeAndFetch(string)[0][0] + 1
+	TransactionId = sql.exeAndFetch(string)[0][0] + 1  # new transaction id is unique now
 
 	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
 	string = string.format(Seller, Vehicle)
-	print(string)
+	print(string)  # debugging
 	sql.execute(string)
 
-	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), '{:s}')"
+	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
 	string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
-	print(string)
-	sql.execute(string)
-
-        # the line below still isn't working!!
-	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
-	string = string.format(Seller, Vehicle)
-	print(string)
-	sql.execute(string)
-
-	string = "insert into owner values('{:s}','{:s}','{:s}')".format(Buyer,Vehicle, 'y')
+	print(string)  # debugging
 	sql.execute(string)
 
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
 	string = string.format(Buyer, Vehicle, 'y')
+	print(string)  # debugging
 	sql.execute(string)
-	sql.execute(string)
-	return
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
