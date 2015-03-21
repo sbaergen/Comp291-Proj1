@@ -151,17 +151,14 @@ def autoTrans(sql):
 
 	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
 	string = string.format(Seller, Vehicle)
-	print(string)  # debugging
 	sql.execute(string)
 
 	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
 	string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
-	print(string)  # debugging
 	sql.execute(string)
 
 	string = "insert into owner values('{:s}','{:s}','{:s}')"
 	string = string.format(Buyer, Vehicle, 'y')
-	print(string)  # debugging
 	sql.execute(string)
 
 def licenceReg(sql):
