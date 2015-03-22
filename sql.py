@@ -45,6 +45,9 @@ class SqlConnection:
                         self.curs.execute(t)
                 f.close()
                 return None
+	
+        def getCurs(self):
+                return self.curs
 
         def commitOff(self):
                 self.con.autocommit = 0

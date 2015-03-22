@@ -132,50 +132,68 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-	Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
-	Buyer = input("Enter the sin of the buyer: ")
-	## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
-	Seller = input("Enter the sin of the seller: ")
-	Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
-	Price = eval(input("Enter the price the vehicle was sold for ($): "))
+        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
+        Buyer = input("Enter the sin of the buyer: ")
+        ## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
+        Seller = input("Enter the sin of the seller: ")
+        Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
+        Price = eval(input("Enter the price the vehicle was sold for ($): "))
 
-	string = "SELECT MAX(transaction_id) FROM auto_sale s"
-	TransactionId = sql.exeAndFetch(string)[0][0] + 1  # new transaction id is unique now
+        string = "SELECT MAX(transaction_id) FROM auto_sale s"
+        TransactionId = sql.exeAndFetch(string)[0][0] + 1  # new transaction id is unique now
 
-	string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
-	string = string.format(Seller, Vehicle)
-	sql.execute(string)
+        string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
+        string = string.format(Seller, Vehicle)
+        sql.execute(string)
 
-	string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
-	string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
-	sql.execute(string)
+        string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
+        string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
+        sql.execute(string)
 
-	string = "insert into owner values('{:s}','{:s}','{:s}')"
-	string = string.format(Buyer, Vehicle, 'y')
-	sql.execute(string)
+        string = "insert into owner values('{:s}','{:s}','{:s}')"
+        string = string.format(Buyer, Vehicle, 'y')
+        sql.execute(string)
 
 # I will add a person with sin = 131131131 to use for tesing w/ this function
 def licenceReg(sql):
-	string = "SELECT MAX(licence_no) FROM drive_licence"
-	print (string + " is now ...")  # debugging
-	Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1
-	print(Licence_no)  # debugging
+        string = "SELECT MAX(licence_no) FROM drive_licence"
+        print (string + " is now ...")  # debugging
+        Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1
+        print(Licence_no)  # debugging
 
-	Person = input("Enter the sin of the person: ")
-	Class = input("Enter the class of driving licence of the person: ")
-	Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ")
-	Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ")
-	File_name = input("Enter the path to the picture: ")  # currently not used
+        Person = input("Enter the sin of the person: ")
+        Class = input("Enter the class of driving licence of the person: ")
+        Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ")
+        Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ")
+        File_name = input("Enter the path to the picture: ")  # currently not used
+
+        # #Load image into memory from local file
+        # #(Assumes a file by this name exists in the directory you are running from)
+        f_image  = open('meow.jpg','rb')
+        image  = f_image.read()
+
+        # prepare memory for operation parameters
+        # cursor.setinputsizes(image=cx_Oracle.BLOB)
+
+        # Housekeeping...
+        f_image.close()
+
 # From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15
-	#Picture = open(File_name, "rb")
-	#Picture = Picture.read(16)
-	#print "%s" % (binascii.hexlify(Picture))
-	Picture = 0xFF  # testing with a statick picture? ..
-	string = "insert into drive_licence values ('{:s}','{:s}','{:s}', '{:d}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
-	string = string.format(str(Licence_no),Person,Class,Picture,Issuing_date,Expiry_date)
-	print (string)  # debugging
-	sql.execute(string)
-	return
+        #Picture = open(File_name, "rb")
+        #Picture = Picture.read(16)
+        #print "%s" % (binascii.hexlify(Picture))
+        Picture = image
+        curs = sql.getCurs()
+        curs = sql.getCurs()
+        string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
+        curs.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
+        # string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values ('{:s}','{:s}','{:s}', '{:s}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
+        # string = string.format(str(Licence_no),Person,Class,Picture,Issuing_date,Expiry_date)
+        # print(len(string))
+        # sql.prepImage()
+        # print(string)  # debugging
+        # sql.execute(string)
+        return
 
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
@@ -204,80 +222,80 @@ def searchEngine(sql):
     choice = input("Choose a search type number: ")
 
     while (choice.lower() != 'q'):
-	    if choice == '1':
-		    search1(sql)
-	    elif choice == '2':
-		    search2(sql)
-	    elif choice == '3':
-		    search3(sql)
-	    else:
-		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-		    choice = input("Choose a search type number: ")
+            if choice == '1':
+                    search1(sql)
+            elif choice == '2':
+                    search2(sql)
+            elif choice == '3':
+                    search3(sql)
+            else:
+                    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+                    choice = input("Choose a search type number: ")
 
 def search1(sql):
-	licence_no = input("Enter a licence_no or press enter to continue: ")
-	print("Personal information search\n")
+        licence_no = input("Enter a licence_no or press enter to continue: ")
+        print("Personal information search\n")
          #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
          #licence expiry date of a person given their name or licence_no
          #Allow for duplicate names
          #Not sure whether to present r_id or the actual description of the condition
-	if len(licence_no) != 0:
-		string = "SELECT p.name, l.licence_no, p.addr, p.birthday, l.class, r.r_id, l.expiring_date FROM people p, licence l, restriction r WHERE l.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-		Results = (sql.exeAndFetch(string.format(licence_no)))
-	else:
-		name = input("Enter a name or press enter to continue: ")
-	if len(name) != 0 and len(licence_no) == 0:
-		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = name and p.sin = d.sin and d.licence_no = r.licence_no"
-		Results = (sql.exeAndFetch(string.format(name)))
+        if len(licence_no) != 0:
+                string = "SELECT p.name, l.licence_no, p.addr, p.birthday, l.class, r.r_id, l.expiring_date FROM people p, licence l, restriction r WHERE l.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+                Results = (sql.exeAndFetch(string.format(licence_no)))
+        else:
+                name = input("Enter a name or press enter to continue: ")
+        if len(name) != 0 and len(licence_no) == 0:
+                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = name and p.sin = d.sin and d.licence_no = r.licence_no"
+                Results = (sql.exeAndFetch(string.format(name)))
 
-	for result in Results:
-		for item in result:
-			print(item)
-			print(",")
-		print("\n")
-	choice = 'q'
-	return
+        for result in Results:
+                for item in result:
+                        print(item)
+                        print(",")
+                print("\n")
+        choice = 'q'
+        return
 
 
 def search2(sql):
-	print("Personal Violation Record\n")
-	licence_no = input("Enter a licence number or press enter to continue: ")
-	if len(licence_no) != 0:
+        print("Personal Violation Record\n")
+        licence_no = input("Enter a licence number or press enter to continue: ")
+        if len(licence_no) != 0:
           #These Queries must list everything from ticket (not sure if t.(*) will select all) from
           #ticket given the sin of the person or their drivers licence number
-		string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.sin = '{:s}' and d.sin = t.violator_no"
-		Results = (sql.exeAndFetch(string.format(licence_no)))
-	else:
-		sin = input("Enter a valid sin or press enter to continue: ")
+                string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.sin = '{:s}' and d.sin = t.violator_no"
+                Results = (sql.exeAndFetch(string.format(licence_no)))
+        else:
+                sin = input("Enter a valid sin or press enter to continue: ")
 
-	if len(sin) != 0 and len(licence_no) == 0:
-		string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
-		Results = (sql.exeAndFetch(string.format(sin)))
+        if len(sin) != 0 and len(licence_no) == 0:
+                string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
+                Results = (sql.exeAndFetch(string.format(sin)))
 
-	for result in Results:
-		for item in result:
-			print(item)
-			print(",")
-		print("\n")
-	choice = 'q'
-	return
+        for result in Results:
+                for item in result:
+                        print(item)
+                        print(",")
+                print("\n")
+        choice = 'q'
+        return
 
 def search3(sql):
-	print("Vehicle History\n")
-	serial_no = input("Enter a serial_no: ")
+        print("Vehicle History\n")
+        serial_no = input("Enter a serial_no: ")
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_no) FROM auto_sale a, ticket t WHERE a.vehicle_id = serial_no and t.vehicle_no = '{:s}' GROUP BY a.vehicle_id"
-	Results = (sql.exeAndFetch(string.format(serial_no)))
+        string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_no) FROM auto_sale a, ticket t WHERE a.vehicle_id = serial_no and t.vehicle_no = '{:s}' GROUP BY a.vehicle_id"
+        Results = (sql.exeAndFetch(string.format(serial_no)))
 
-	for result in Results:
-		for item in result:
-			print(item)
-			print(",")
-		print("\n")
-	choice = 'q'
-	return
+        for result in Results:
+                for item in result:
+                        print(item)
+                        print(",")
+                print("\n")
+        choice = 'q'
+        return
 
 
 main()  # run the main function
