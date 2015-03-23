@@ -82,6 +82,7 @@ Please Select from the following:
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
         serial_no = input("Enter serial_no of vehicle: ")
+	#unique
         maker = input("Enter the make of the vehicle: ")
         model = input("Enter the model of the vehicle: ")
         year = input("Enter the year of the vehicle: ")
@@ -99,7 +100,7 @@ def newVehicle(sql):
                 Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
                 # check for valid input of y or n, also in SQL is it upper or lower y/n?
                 Owner = input("Enter the owner id of the owner of the vehicle: ")
-
+-
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
                         Sin = input("Enter the sin of the owner: ")
@@ -130,27 +131,78 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
-        Buyer = input("Enter the sin of the buyer: ")
-        ## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
-        Seller = input("Enter the sin of the seller: ")
-        Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
-        Price = eval(input("Enter the price the vehicle was sold for ($): "))
-
         string = "SELECT MAX(transaction_id) FROM auto_sale s"
         TransactionId = sql.exeAndFetch(string)[0][0] + 1  # new transaction id is unique now
-
-        string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
-        string = string.format(Seller, Vehicle)
+        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")
+        Date = input("Enter the date of the transaction 'YYYY-MM-DD': ")
+        Price = eval(input("Enter the price the vehicle was sold for ($): "))
+        Seller = input("Enter the sin of the seller: ")
+        string = "delete from owner where vehicle_id = '{:s}'"
+        string = string.format(Vehicle)
         sql.execute(string)
+        primaryExists = False
+        buyerNum = int(input("Enter the number of buyers: "))
+        for _ in range(buyerNum):
+                Buyer = input("Enter the sin of the buyer: ")
+                primary = input("Is this owner the primary owner? ")
+                if primary.lower() == 'y':
+                         string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
+                         string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
+                         sql.execute(string)
+                         primaryExists = True
+                         string = "insert into owner values('{:s}','{:s}','{:s}')"
+                         string = string.format(Buyer, Vehicle, 'y')
+                         sql.execute(string)
+                elif primary.lower() == 'n':
+                         string = "insert into owner values('{:s}','{:s}','{:s}')"
+                         string = string.format(Buyer, Vehicle, 'n')
+                         sql.execute(string)
 
-        string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
-        string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
-        sql.execute(string)
 
-        string = "insert into owner values('{:s}','{:s}','{:s}')"
-        string = string.format(Buyer, Vehicle, 'y')
-        sql.execute(string)
+#        valid = False
+#        while !valid
+#                string = string.format(Buyer)
+#                        newBuyer = input ("Buyer not found. Would you like to add them? (y/n)"
+#                        if newBuyer.lower() == 'y':
+#                                Name = input("Enter the name of the buyer: ")
+#                                Height = eval(input("Enter the height of the buyer: "))
+#                                Weight = eval(input("Enter the weight of the buyer: "))
+#                                Eyecolor = input("Enter the eye color of the buyer: ")
+#                                Haircolor = input("Enter the hair color of the buyer: ")
+#                                Address = input("Enter the address of the buyer: ")
+#                                Gender = input("Enter the gender of the buyer: ")
+#                                Birthday = input("Enter the birthday of the buyer in form 'YYYY-MM-DD': ")
+#                                string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
+#                                sql.execute(string.format(Buyer,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+#                                valid = True
+#                        elif newBuyer.lower() == 'n':
+#                                Buyer = input("Enter the sin of the buyer")
+#                        else:
+#                                print("Invalid input, please enter either the letter y or n")
+#                else:
+#                        valid = True
+
+
+
+
+
+
+
+
+
+#        while True:
+#                addMore = input("Add another owner? (y/n): ")
+#                if addMore.lower() == 'y':
+#                        addOwner = True
+#                        break
+#                elif addMore.lower() =='n':
+#                        addOwner = False
+#                        break
+#                else:
+#                        print("Invalid input, please enter either the letter y or n")
+
+
+
 
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
@@ -191,10 +243,15 @@ def searchEngine(sql):
     print("2.Personal Violation Record")
     print("3.Vehicle history")
     print("quit (q)")
-
-    choice = input("Choose a search type number: ")
+    choice = '0'
+    invalid = False
 
     while (choice.lower() != 'q'):
+	    if invalid == False:
+		    choice = input("Choose a search type or press 'q' to quit: ")
+	    else:
+		    invalid = False
+
 	    if choice == '1':
 		    search1(sql)
 	    elif choice == '2':
@@ -202,28 +259,35 @@ def searchEngine(sql):
 	    elif choice == '3':
 		    search3(sql)
 	    else:
-		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-		    choice = input("Choose a search type number: ")
-	    if (choice.lower() != 'q') and choice != 1 and choice != 2 and choice != 3:
-		    choice = input("Choose another search type or press 'q' to quit: ")
+		    if choice.lower() != 'q':
+			    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+			    choice = input("Choose a valid search type or press 'q' to quit: ")
+			    invalid = True
 
 def search1(sql):
-	licence_no = input("Enter a licence_no or press enter to continue: ")
+	print("\n")
 	print("Personal information search\n")
+	licence_no = input("Enter a licence_no or press enter to continue: ")
+
          #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
          #licence expiry date of a person given their name or licence_no
          #Allow for duplicate names
          #Not sure whether to present r_id or the actual description of the condition
-	if len(licence_no) != 0:
-		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-		Results = (sql.exeAndFetch(string.format(licence_no)))
-		name = None
-	else:
-		name = input("Enter a name or press enter to continue: ")
+        if len(licence_no) != 0:
+                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+                Results = (sql.exeAndFetch(string.format(licence_no)))
+                name = None
+        else:
+                name = input("Enter a name or press enter to continue: ")
 
 	if name != None and len(licence_no) == 0:
 		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
 		Results = (sql.exeAndFetch(string.format(name)))
+
+	print("\n")
+	if len(Results) == 0:
+		print("No person found")
+		print("\n")
 
 	for result in Results:
 		print("Name: ", result [0])
@@ -238,20 +302,26 @@ def search1(sql):
 
 
 def search2(sql):
+	print("\n")
 	print("Personal Violation Record\n")
 	licence_no = input("Enter a licence number or press enter to continue: ")
 	if len(licence_no) != 0:
           #These Queries must list everything from ticket (not sure if t.(*) will select all) from
           #ticket given the sin of the person or their drivers licence number
-		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d, WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
+		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
 		Results = (sql.exeAndFetch(string.format(licence_no)))
 		sin = None
 	else:
-		sin = input("Enter a valid sin or press enter to continue: ")
+		sin = input("Enter a valid sin: ")
 
 	if sin != None  and len(licence_no) == 0:
-		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE t.violator_no = '{:s}'"
+		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
 		Results = (sql.exeAndFetch(string.format(sin)))
+
+	print("\n")
+	if len(Results) == 0:
+		print("No tickets found")
+		print("\n")
 
 	for result in Results:
 		print("Ticket Number: ", result[0])
@@ -262,22 +332,29 @@ def search2(sql):
 		print("Ticket Date: ", result[5])
 		print("Place: ", result[6])
 		print("Descriptions: ", result[7])
+		print("\n")
 	print("\n")
 	return
 
 def search3(sql):
+	print("\n")
 	print("Vehicle History\n")
 	serial_no = input("Enter a serial_no: ")
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_id) FROM auto_sale a, ticket t WHERE t.vehicle_id = '{:s}'  and a.vehicle_id = '{:s}' GROUP BY a.vehicle_id"
-	Results = (sql.exeAndFetch(string.format(serial_no, serial_no)))
+	string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
+	Results1 = (sql.exeAndFetch(string.format(serial_no)))
 
-	for result in Results:
-		print("Amount of Sales: ", result[0])
-		print("Average Sale Price: ", result[1])
-		print("Amount of Infractions: ", result[2])
+	string = "SELECT COUNT(t.vehicle_id) FROM ticket t WHERE  t.vehicle_id = '{:s}'"
+	Results2 = (sql.exeAndFetch(string.format(serial_no)))
+
+	print("\n")
+	for result1 in Results1:
+		for result2 in Results2:
+			print("Amount of Sales: ", result1[0])
+			print("Average Sale Price: ", result1[1])
+			print("Amount of Infractions: ", result2[0])
 	print("\n")
 	return
 
