@@ -231,7 +231,7 @@ def searchEngine(sql):
 	    else:
 		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
 		    choice = input("Choose a search type number: ")
-	    if (choice.lower() != 'q'):
+	    if (choice.lower() != 'q') and choice != 1 and choice != 2 and choice != 3:
 		    choice = input("Choose another search type or press 'q' to quit: ")
 
 def search1(sql):
@@ -298,8 +298,8 @@ def search3(sql):
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_id) FROM auto_sale a, ticket t WHERE a.vehicle_id = serial_no and t.vehicle_id = '{:s}' GROUP BY a.vehicle_id"
-	Results = (sql.exeAndFetch(string.format(serial_no)))
+	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_id) FROM auto_sale a, ticket t WHERE t.vehicle_id = '{:s}'  and a.vehicle_id = '{:s}' GROUP BY a.vehicle_id"
+	Results = (sql.exeAndFetch(string.format(serial_no, serial_no)))
 
 	for result in Results:
 		print("Amount of Sales: ", result[0])
