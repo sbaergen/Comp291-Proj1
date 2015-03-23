@@ -165,11 +165,11 @@ def licenceReg(sql):
         Class = input("Enter the class of driving licence of the person: ")
         Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ")
         Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ")
-        File_name = input("Enter the path to the picture: ")  # currently not used
+        File_name = input("Enter the path to the picture: ")
 
         # #Load image into memory from local file
         # #(Assumes a file by this name exists in the directory you are running from)
-        f_image  = open('meow.jpg','rb')
+        f_image  = open(File_name,'rb')
         image  = f_image.read()
 
         # prepare memory for operation parameters
@@ -182,11 +182,13 @@ def licenceReg(sql):
         #Picture = open(File_name, "rb")
         #Picture = Picture.read(16)
         #print "%s" % (binascii.hexlify(Picture))
+
         Picture = image
         curs = sql.getCurs()
         curs = sql.getCurs()
         string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
         curs.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
+
         # string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values ('{:s}','{:s}','{:s}', '{:s}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
         # string = string.format(str(Licence_no),Person,Class,Picture,Issuing_date,Expiry_date)
         # print(len(string))
