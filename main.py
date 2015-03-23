@@ -22,17 +22,17 @@ def main():
                         print("Oops, try again!")
                         continue
 
+        # We should ask for a file w/ create table statements
+
         # Drop & Create Tables
         print("Dropping / Creating Tables")
         sql.executeFromFile("p1_setup.sql.txt")
 
+        # We should ask for a file w/ insert statements
+
         # Populate tables
         print("Populate Tables")
         sql.executeFromFile("population.txt")
-
-        # the test worked here.. now for auto transaction
-        # print("teting delete here:")
-        # sql.execute("delete from owner where (owner_id = '121121121' and vehicle_id = '1020')")
 
         print ("Welcome to the Alberta Auto Registration System!")
         while(True):
@@ -81,8 +81,6 @@ Please Select from the following:
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
-        print("NEW VEHICLE REGISTRATION")
-        print("")
         serial_no = input("Enter serial_no of vehicle: ")
         maker = input("Enter the make of the vehicle: ")
         model = input("Enter the model of the vehicle: ")
@@ -156,9 +154,7 @@ def autoTrans(sql):
 
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
-        print (string + " is now ...")  # debugging
         Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1
-        print(Licence_no)  # debugging
 
         Person = input("Enter the sin of the person: ")
         Class = input("Enter the class of driving licence of the person: ")
@@ -188,7 +184,6 @@ def violationRec(sql):
         #This simply inserts the ticket into our database
         string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
         string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
-        print(string)  # debugging
         sql.execute(string)
 
 def searchEngine(sql):
@@ -220,12 +215,12 @@ def search1(sql):
          #Allow for duplicate names
          #Not sure whether to present r_id or the actual description of the condition
 	if len(licence_no) != 0:
-		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"  
+		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
 		Results = (sql.exeAndFetch(string.format(licence_no)))
 		name = None
 	else:
 		name = input("Enter a name or press enter to continue: ")
-        
+
 	if name != None and len(licence_no) == 0:
 		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
 		Results = (sql.exeAndFetch(string.format(name)))
