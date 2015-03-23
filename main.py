@@ -1,6 +1,6 @@
 import getpass
 import sql as sqlFile
-import os,sys
+# import os,sys
 #import Image
 
 # This will display the menu and handle input to the menu
@@ -154,7 +154,6 @@ def autoTrans(sql):
         string = string.format(Buyer, Vehicle, 'y')
         sql.execute(string)
 
-# I will add a person with sin = 131131131 to use for tesing w/ this function
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
         print (string + " is now ...")  # debugging
@@ -165,35 +164,14 @@ def licenceReg(sql):
         Class = input("Enter the class of driving licence of the person: ")
         Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ")
         Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ")
-        File_name = input("Enter the path to the picture: ")  # currently not used
+        File_name = input("Enter the path to the picture: ")
+        Picture = sqlFile.getPic(File_name)
 
-        # #Load image into memory from local file
-        # #(Assumes a file by this name exists in the directory you are running from)
-        f_image  = open('meow.jpg','rb')
-        image  = f_image.read()
-
-        # prepare memory for operation parameters
+        # prepare memory for operation parameters  # i found I didn't need to do this!
         # cursor.setinputsizes(image=cx_Oracle.BLOB)
 
-        # Housekeeping...
-        f_image.close()
-
-# From http://stackoverflow.com/questions/4664343/open-file-in-python-and-read-bytes 18/03/15
-        #Picture = open(File_name, "rb")
-        #Picture = Picture.read(16)
-        #print "%s" % (binascii.hexlify(Picture))
-        Picture = image
-        curs = sql.getCurs()
-        curs = sql.getCurs()
         string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
-        curs.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
-        # string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values ('{:s}','{:s}','{:s}', '{:s}', TO_DATE('{:s}', 'YYYY-MM-DD'), TO_DATE('{:s}', 'YYYY-MM-DD'))"
-        # string = string.format(str(Licence_no),Person,Class,Picture,Issuing_date,Expiry_date)
-        # print(len(string))
-        # sql.prepImage()
-        # print(string)  # debugging
-        # sql.execute(string)
-        return
+        sql.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
 
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
