@@ -200,80 +200,90 @@ def searchEngine(sql):
     choice = input("Choose a search type number: ")
 
     while (choice.lower() != 'q'):
-            if choice == '1':
-                    search1(sql)
-            elif choice == '2':
-                    search2(sql)
-            elif choice == '3':
-                    search3(sql)
-            else:
-                    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-                    choice = input("Choose a search type number: ")
+	    if choice == '1':
+		    search1(sql)
+	    elif choice == '2':
+		    search2(sql)
+	    elif choice == '3':
+		    search3(sql)
+	    else:
+		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+		    choice = input("Choose a search type number: ")
+	    if (choice.lower() != 'q') and choice != 1 and choice != 2 and choice != 3:
+		    choice = input("Choose another search type or press 'q' to quit: ")
 
 def search1(sql):
-        licence_no = input("Enter a licence_no or press enter to continue: ")
-        print("Personal information search\n")
+	licence_no = input("Enter a licence_no or press enter to continue: ")
+	print("Personal information search\n")
          #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
          #licence expiry date of a person given their name or licence_no
          #Allow for duplicate names
          #Not sure whether to present r_id or the actual description of the condition
-        if len(licence_no) != 0:
-                string = "SELECT p.name, l.licence_no, p.addr, p.birthday, l.class, r.r_id, l.expiring_date FROM people p, licence l, restriction r WHERE l.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-                Results = (sql.exeAndFetch(string.format(licence_no)))
-        else:
-                name = input("Enter a name or press enter to continue: ")
-        if len(name) != 0 and len(licence_no) == 0:
-                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = name and p.sin = d.sin and d.licence_no = r.licence_no"
-                Results = (sql.exeAndFetch(string.format(name)))
+	if len(licence_no) != 0:
+		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"  
+		Results = (sql.exeAndFetch(string.format(licence_no)))
+		name = None
+	else:
+		name = input("Enter a name or press enter to continue: ")
+        
+	if name != None and len(licence_no) == 0:
+		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+		Results = (sql.exeAndFetch(string.format(name)))
 
-        for result in Results:
-                for item in result:
-                        print(item)
-                        print(",")
-                print("\n")
-        choice = 'q'
-        return
+	for result in Results:
+		print("Name: ", result [0])
+		print("Licence_no: ", result[1])
+		print("Address: ", result[2])
+		print("Birthday: ", result[3])
+		print("Driving Class: ", result[4])
+		print("Driving Condition: ", result[5])
+		print("Expiring Date: ", result[6])
+	print("\n")
+	return
 
 
 def search2(sql):
-        print("Personal Violation Record\n")
-        licence_no = input("Enter a licence number or press enter to continue: ")
-        if len(licence_no) != 0:
+	print("Personal Violation Record\n")
+	licence_no = input("Enter a licence number or press enter to continue: ")
+	if len(licence_no) != 0:
           #These Queries must list everything from ticket (not sure if t.(*) will select all) from
           #ticket given the sin of the person or their drivers licence number
-                string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.sin = '{:s}' and d.sin = t.violator_no"
-                Results = (sql.exeAndFetch(string.format(licence_no)))
-        else:
-                sin = input("Enter a valid sin or press enter to continue: ")
+		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d, WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
+		Results = (sql.exeAndFetch(string.format(licence_no)))
+		sin = None
+	else:
+		sin = input("Enter a valid sin or press enter to continue: ")
 
-        if len(sin) != 0 and len(licence_no) == 0:
-                string = "SELECT t.(*) FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
-                Results = (sql.exeAndFetch(string.format(sin)))
+	if sin != None  and len(licence_no) == 0:
+		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE t.violator_no = '{:s}'"
+		Results = (sql.exeAndFetch(string.format(sin)))
 
-        for result in Results:
-                for item in result:
-                        print(item)
-                        print(",")
-                print("\n")
-        choice = 'q'
-        return
+	for result in Results:
+		print("Ticket Number: ", result[0])
+		print("Violator Number: ", result[1])
+		print("Vehicle Identification: ", result[2])
+		print("Office Number: ", result[3])
+		print("Ticket Type: ", result[4])
+		print("Ticket Date: ", result[5])
+		print("Place: ", result[6])
+		print("Descriptions: ", result[7])
+	print("\n")
+	return
 
 def search3(sql):
-        print("Vehicle History\n")
-        serial_no = input("Enter a serial_no: ")
+	print("Vehicle History\n")
+	serial_no = input("Enter a serial_no: ")
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-        string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_no) FROM auto_sale a, ticket t WHERE a.vehicle_id = serial_no and t.vehicle_no = '{:s}' GROUP BY a.vehicle_id"
-        Results = (sql.exeAndFetch(string.format(serial_no)))
+	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_id) FROM auto_sale a, ticket t WHERE t.vehicle_id = '{:s}'  and a.vehicle_id = '{:s}' GROUP BY a.vehicle_id"
+	Results = (sql.exeAndFetch(string.format(serial_no, serial_no)))
 
-        for result in Results:
-                for item in result:
-                        print(item)
-                        print(",")
-                print("\n")
-        choice = 'q'
-        return
-
+	for result in Results:
+		print("Amount of Sales: ", result[0])
+		print("Average Sale Price: ", result[1])
+		print("Amount of Infractions: ", result[2])
+	print("\n")
+	return
 
 main()  # run the main function
