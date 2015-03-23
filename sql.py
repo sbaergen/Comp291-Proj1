@@ -1,5 +1,6 @@
 import cx_Oracle
 import getpass
+import datetime
 
 def getPic(File_name):
         # #Load image into memory from local file
@@ -8,6 +9,17 @@ def getPic(File_name):
         image  = f_image.read()
         f_image.close()
         return image
+
+def getDate(message):
+        while(True):
+                date = input(message)
+                try:
+                        datetime.datetime.strptime(date, '%Y-%m-%d')
+                        return date
+                except:
+                        print("Incorrect data format, should be YYYY-MM-DD")
+        return None
+
 
 class SqlConnection:
         def __init__(self, user, passw):

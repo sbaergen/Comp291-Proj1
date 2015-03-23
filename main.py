@@ -182,14 +182,6 @@ def autoTrans(sql):
 #                else:
 #                        valid = True
 
-
-
-
-
-
-
-
-
 #        while True:
 #                addMore = input("Add another owner? (y/n): ")
 #                if addMore.lower() == 'y':
@@ -200,8 +192,6 @@ def autoTrans(sql):
 #                        break
 #                else:
 #                        print("Invalid input, please enter either the letter y or n")
-
-
 
 
 def licenceReg(sql):
