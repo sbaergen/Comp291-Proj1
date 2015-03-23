@@ -82,7 +82,7 @@ Please Select from the following:
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
         serial_no = input("Enter serial_no of vehicle: ")
-	#unique
+        #unique
         maker = input("Enter the make of the vehicle: ")
         model = input("Enter the model of the vehicle: ")
         year = input("Enter the year of the vehicle: ")
@@ -100,7 +100,7 @@ def newVehicle(sql):
                 Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
                 # check for valid input of y or n, also in SQL is it upper or lower y/n?
                 Owner = input("Enter the owner id of the owner of the vehicle: ")
--
+
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
                         Sin = input("Enter the sin of the owner: ")
@@ -247,27 +247,27 @@ def searchEngine(sql):
     invalid = False
 
     while (choice.lower() != 'q'):
-	    if invalid == False:
-		    choice = input("Choose a search type or press 'q' to quit: ")
-	    else:
-		    invalid = False
+            if invalid == False:
+        	    choice = input("Choose a search type or press 'q' to quit: ")
+            else:
+        	    invalid = False
 
-	    if choice == '1':
-		    search1(sql)
-	    elif choice == '2':
-		    search2(sql)
-	    elif choice == '3':
-		    search3(sql)
-	    else:
-		    if choice.lower() != 'q':
-			    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-			    choice = input("Choose a valid search type or press 'q' to quit: ")
-			    invalid = True
+            if choice == '1':
+        	    search1(sql)
+            elif choice == '2':
+        	    search2(sql)
+            elif choice == '3':
+        	    search3(sql)
+            else:
+        	    if choice.lower() != 'q':
+        		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+        		    choice = input("Choose a valid search type or press 'q' to quit: ")
+        		    invalid = True
 
 def search1(sql):
-	print("\n")
-	print("Personal information search\n")
-	licence_no = input("Enter a licence_no or press enter to continue: ")
+        print("\n")
+        print("Personal information search\n")
+        licence_no = input("Enter a licence_no or press enter to continue: ")
 
          #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
          #licence expiry date of a person given their name or licence_no
@@ -280,82 +280,82 @@ def search1(sql):
         else:
                 name = input("Enter a name or press enter to continue: ")
 
-	if name != None and len(licence_no) == 0:
-		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-		Results = (sql.exeAndFetch(string.format(name)))
+        if name != None and len(licence_no) == 0:
+        	string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+        	Results = (sql.exeAndFetch(string.format(name)))
 
-	print("\n")
-	if len(Results) == 0:
-		print("No person found")
-		print("\n")
+        print("\n")
+        if len(Results) == 0:
+        	print("No person found")
+        	print("\n")
 
-	for result in Results:
-		print("Name: ", result [0])
-		print("Licence_no: ", result[1])
-		print("Address: ", result[2])
-		print("Birthday: ", result[3])
-		print("Driving Class: ", result[4])
-		print("Driving Condition: ", result[5])
-		print("Expiring Date: ", result[6])
-	print("\n")
-	return
+        for result in Results:
+        	print("Name: ", result [0])
+        	print("Licence_no: ", result[1])
+        	print("Address: ", result[2])
+        	print("Birthday: ", result[3])
+        	print("Driving Class: ", result[4])
+        	print("Driving Condition: ", result[5])
+        	print("Expiring Date: ", result[6])
+        print("\n")
+        return
 
 
 def search2(sql):
-	print("\n")
-	print("Personal Violation Record\n")
-	licence_no = input("Enter a licence number or press enter to continue: ")
-	if len(licence_no) != 0:
+        print("\n")
+        print("Personal Violation Record\n")
+        licence_no = input("Enter a licence number or press enter to continue: ")
+        if len(licence_no) != 0:
           #These Queries must list everything from ticket (not sure if t.(*) will select all) from
           #ticket given the sin of the person or their drivers licence number
-		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
-		Results = (sql.exeAndFetch(string.format(licence_no)))
-		sin = None
-	else:
-		sin = input("Enter a valid sin: ")
+        	string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
+        	Results = (sql.exeAndFetch(string.format(licence_no)))
+        	sin = None
+        else:
+        	sin = input("Enter a valid sin: ")
 
-	if sin != None  and len(licence_no) == 0:
-		string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
-		Results = (sql.exeAndFetch(string.format(sin)))
+        if sin != None  and len(licence_no) == 0:
+        	string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
+        	Results = (sql.exeAndFetch(string.format(sin)))
 
-	print("\n")
-	if len(Results) == 0:
-		print("No tickets found")
-		print("\n")
+        print("\n")
+        if len(Results) == 0:
+        	print("No tickets found")
+        	print("\n")
 
-	for result in Results:
-		print("Ticket Number: ", result[0])
-		print("Violator Number: ", result[1])
-		print("Vehicle Identification: ", result[2])
-		print("Office Number: ", result[3])
-		print("Ticket Type: ", result[4])
-		print("Ticket Date: ", result[5])
-		print("Place: ", result[6])
-		print("Descriptions: ", result[7])
-		print("\n")
-	print("\n")
-	return
+        for result in Results:
+        	print("Ticket Number: ", result[0])
+        	print("Violator Number: ", result[1])
+        	print("Vehicle Identification: ", result[2])
+        	print("Office Number: ", result[3])
+        	print("Ticket Type: ", result[4])
+        	print("Ticket Date: ", result[5])
+        	print("Place: ", result[6])
+        	print("Descriptions: ", result[7])
+        	print("\n")
+        print("\n")
+        return
 
 def search3(sql):
-	print("\n")
-	print("Vehicle History\n")
-	serial_no = input("Enter a serial_no: ")
+        print("\n")
+        print("Vehicle History\n")
+        serial_no = input("Enter a serial_no: ")
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-	string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
-	Results1 = (sql.exeAndFetch(string.format(serial_no)))
+        string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
+        Results1 = (sql.exeAndFetch(string.format(serial_no)))
 
-	string = "SELECT COUNT(t.vehicle_id) FROM ticket t WHERE  t.vehicle_id = '{:s}'"
-	Results2 = (sql.exeAndFetch(string.format(serial_no)))
+        string = "SELECT COUNT(t.vehicle_id) FROM ticket t WHERE  t.vehicle_id = '{:s}'"
+        Results2 = (sql.exeAndFetch(string.format(serial_no)))
 
-	print("\n")
-	for result1 in Results1:
-		for result2 in Results2:
-			print("Amount of Sales: ", result1[0])
-			print("Average Sale Price: ", result1[1])
-			print("Amount of Infractions: ", result2[0])
-	print("\n")
-	return
+        print("\n")
+        for result1 in Results1:
+        	for result2 in Results2:
+        		print("Amount of Sales: ", result1[0])
+        		print("Average Sale Price: ", result1[1])
+        		print("Amount of Infractions: ", result2[0])
+        print("\n")
+        return
 
 main()  # run the main function
