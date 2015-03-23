@@ -296,18 +296,18 @@ def search3(sql):
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
-	string = "SELECT COUNT(a.vehicle_id), AVG(a.price), COUNT(t.vehicle_id) FROM auto_sale a, ticket t WHERE  a.vehicle_id = '{:s}'"
-	Results = (sql.exeAndFetch(string.format(serial_no)))
-	
-	if len(Results) == 0:
-		print("\n")
-		print("No vehicle found")
-		print("\n")
+	string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
+	Results1 = (sql.exeAndFetch(string.format(serial_no)))
 
-	for result in Results:
-		print("Amount of Sales: ", result[0])
-		print("Average Sale Price: ", result[1])
-		print("Amount of Infractions: ", result[2])
+	string = "SELECT COUNT(t.vehicle_id) FROM ticket t WHERE  t.vehicle_id = '{:s}'"
+	Results2 = (sql.exeAndFetch(string.format(serial_no)))
+	
+	print("\n")
+	for result1 in Results1:
+		for result2 in Results2:
+			print("Amount of Sales: ", result1[0])
+			print("Average Sale Price: ", result1[1])
+			print("Amount of Infractions: ", result2[0])
 	print("\n")
 	return
 
