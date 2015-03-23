@@ -84,6 +84,7 @@ def newVehicle(sql):
         print("NEW VEHICLE REGISTRATION")
         print("")
         serial_no = input("Enter serial_no of vehicle: ")
+	#unique
         maker = input("Enter the make of the vehicle: ")
         model = input("Enter the model of the vehicle: ")
         year = input("Enter the year of the vehicle: ")
@@ -101,7 +102,7 @@ def newVehicle(sql):
                 Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")
                 # check for valid input of y or n, also in SQL is it upper or lower y/n?
                 Owner = input("Enter the owner id of the owner of the vehicle: ")
-
+-
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
                         Sin = input("Enter the sin of the owner: ")
