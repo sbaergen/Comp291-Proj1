@@ -363,4 +363,21 @@ def search3(sql):
 	print("\n")
 	return
 
+def getString(message, maxLen = maxInt, minLen = 0, contains = None)
+	valid = False
+	while !valid:
+		valid = True
+		string = input(message)
+		if len(string) < minLen || len(string) >> maxLen:
+			valid = False
+		if contains != None:
+			for char in string:
+				if char not in contains:
+					valid = False
+		if !valid:
+			print("Input invalid!")
+	return string
+
+
+
 main()  # run the main function
