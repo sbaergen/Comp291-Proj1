@@ -185,9 +185,9 @@ def licenceReg(sql):
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
-        ticket_no = 1 + sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  #int (if neccesary)
+        ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int (if neccesary)
         violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
-        vehicle = sqlFile.getString("Enter the serial number of the vehicle : ",15) #char(15)
+        vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
         office = sqlFile.getString("Enter the office number: ",15) #char(15)
         typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
 
