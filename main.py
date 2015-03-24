@@ -90,9 +90,9 @@ def newVehicle(sql):
         serial_no = input("Enter serial_no of vehicle: ")#char (15) #unique sql check
         maker = input("Enter the make of the vehicle: ") #varchar (20)
         model = input("Enter the model of the vehicle: ") #varchar (20)
-        year = input("Enter the year of the vehicle: ") #number (4,0)
+        year = getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
         color = input("Enter the color of the vehicle: ") #varchar(10)
-        vehicleType = eval(input("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): "))#integer #sql valid type
+        vehicleType = getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0)#integer #sql valid type
 
 
         # todo: lets check all of the params
@@ -113,8 +113,8 @@ def newVehicle(sql):
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
                         Sin = input("Enter the sin of the owner: ") #char(15) #unique sql check
                         Name = input("Enter the name of the owner: ") #varchar(40)
-                        Height = eval(input("Enter the height of the owner: ")) #number(5,2)
-                        Weight = eval(input("Enter the weight of the owner: ")) #number(5,2)
+                        Height = getNumber("Enter the height of the owner: ",5,0) #number(5,2)
+                        Weight = getNumber("Enter the weight of the owner: ",5,0) #number(5,2)
                         Eyecolor = input("Enter the eye color of the owner: ") #varchar(10)
                         Haircolor = input("Enter the hair color of the owner: ") #varchar(10)
                         Address = input("Enter the address of the owner: ") #varchar2(50)
@@ -145,7 +145,7 @@ def autoTrans(sql):
         ## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
         Seller = input("Enter the sin of the seller: ") #char(15)
         Date = input("Enter the date of the transaction 'YYYY-MM-DD': ") #date
-        Price = eval(input("Enter the price the vehicle was sold for ($): ")) #numeric(9,2)
+        Price = getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
         string = "SELECT MAX(transaction_id) FROM auto_sale s"
         TransactionId = sql.exeAndFetch(string)[0][0] + 1  # int
@@ -233,8 +233,8 @@ def violationRec(sql):
         vehicle = input("Enter the serial number of the vehicle : ") #char(15)
         office = input("Enter the office number: ") #char(15)
         typeTicket = input("Enter the type of ticket: ") #char 10 #check in other type
-        date = input("Enter the date of the violation(YYYY-MM-DD): ")
-        place = input("Enter the location of the infraction: ")
+        date = input("Enter the date of the violation(YYYY-MM-DD): ") #date
+        place = input("Enter the location of the infraction: ") #
         descr = input("Enter a detailed description of the offence: ")
 
         #This simply inserts the ticket into our database
