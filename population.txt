@@ -1,7 +1,7 @@
 insert into people values('111111111', 'bob', 201.50, 192.70, 'green', 'blonde', '10213_32ave_edmonton_ab_ca','m', date'1980-01-04');
 insert into people values('112112112', 'andy', 165.21, 113.40, 'blue', 'red', '9713_17ave_edmonton_ab_ca','m', date'1985-02-24');
 insert into people values('113113113', 'steve', 172.33, 176.81, 'green', 'blonde', '1219_99ave_calgary_ab_ca','m', date'1983-03-22');
-insert into people values('114114114', 'susan', 183.41, 203.16, 'yellow', 'blonde', '1217_102ave_edmonton_ab_ca','f', date'1970-11-19');
+insert into people values('114114114', 'steve', 183.41, 203.16, 'yellow', 'blonde', '1217_102ave_edmonton_ab_ca','f', date'1970-11-19');
 insert into people values('115115115', 'peter', 173.42, 166.76, 'brown', 'red', '10423_30ave_reddeer_ab_ca','m', date'1967-11-17');
 insert into people values('116116116', 'michelle', 177.76, 192.31, 'brown', 'brown', '6701_88ave_calgary_ab_ca','f', date'1944-12-02');
 insert into people values('117117117', 'sarah', 145.99, 92.36, 'green', 'purple', '1803_92ave_edmonton_ab_ca','f', date'1965-10-23');
