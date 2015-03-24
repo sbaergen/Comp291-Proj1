@@ -2,12 +2,17 @@ import cx_Oracle
 import getpass
 import datetime
 
-def getPic(File_name):
-        # #Load image into memory from local file
-        # #(Assumes a file by this name exists in the directory you are running from)
-        f_image  = open(File_name,'rb')
-        image  = f_image.read()
-        f_image.close()
+def getPic(message):
+        image = None
+        while(True):
+                try:
+                        File_name = input(message)
+                        f_image  = open(File_name,'rb')
+                        image  = f_image.read()
+                        f_image.close()
+                        break
+                except:
+                        print("Error opening the file, please try again.")
         return image
 
 def getDate(message):

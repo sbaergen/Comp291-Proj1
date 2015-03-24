@@ -87,7 +87,7 @@ def newVehicle(sql):
         maker = input("Enter the make of the vehicle: ") #varchar (20)
         model = input("Enter the model of the vehicle: ") #varchar (20)
         year = input("Enter the year of the vehicle: ") #number (4,0)
-        color = input("Enter the color of the vehicle: ") #varchar(10) 
+        color = input("Enter the color of the vehicle: ") #varchar(10)
         vehicleType = eval(input("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): "))#integer #sql valid type
 
 
@@ -103,7 +103,7 @@ def newVehicle(sql):
                 Primary_Ownership = input("Is this person the primary owner of the vehicle? (y/n): ")#char(1)
                 #contains (y or n)
                 Owner = input("Enter the owner id of the owner of the vehicle: ") #char(15)
-		#UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
+                #UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
@@ -136,7 +136,7 @@ def newVehicle(sql):
 
 def autoTrans(sql):
 
-        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15) 
+        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15)
         Buyer = input("Enter the sin of the buyer: ") #char(15)
         ## Second_Buyer = input("Would you like to enter a second Buyer? (y/n) : ")  # ask for more buyers? & which is primary owner?
         Seller = input("Enter the sin of the seller: ") #char(15)
@@ -216,8 +216,8 @@ def licenceReg(sql):
         Class = input("Enter the class of driving licence of the person: ") #varchar(10)
         Issuing_date = input("Enter the date of issue 'YYYY-MM-DD': ") #date
         Expiry_date = input("Enter the date of expiry 'YYYY-MM-DD': ") #date
-        File_name = input("Enter the path to the picture: ") #blob
-        Picture = sqlFile.getPic(File_name)
+        # File_name = input("Enter the path to the picture: ") #blob
+        Picture = sqlFile.getPic("Enter the path to the picture: ")
 
         # prepare memory for operation parameters  # i found I didn't need to do this!
         # cursor.setinputsizes(image=cx_Oracle.BLOB)
@@ -228,7 +228,7 @@ def licenceReg(sql):
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
-        ticket_no = 1 + sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  #int 
+        ticket_no = 1 + sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  #int
         violator = input("Enter the sin of the violator: ") #char(15)
         vehicle = input("Enter the serial number of the vehicle : ") #char(15)
         office = input("Enter the office number: ") #char(15)
@@ -252,21 +252,21 @@ def searchEngine(sql):
 
     while (choice.lower() != 'q'):
             if invalid == False:
-        	    choice = input("Choose a search type or press 'q' to quit: ")
+                    choice = input("Choose a search type or press 'q' to quit: ")
             else:
-        	    invalid = False
+                    invalid = False
 
             if choice == '1':
-        	    search1(sql)
+                    search1(sql)
             elif choice == '2':
-        	    search2(sql)
+                    search2(sql)
             elif choice == '3':
-        	    search3(sql)
+                    search3(sql)
             else:
-        	    if choice.lower() != 'q':
-        		    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-        		    choice = input("Choose a valid search type or press 'q' to quit: ")
-        		    invalid = True
+                    if choice.lower() != 'q':
+                            print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+                            choice = input("Choose a valid search type or press 'q' to quit: ")
+                            invalid = True
 
 def search1(sql):
         print("\n")
@@ -285,22 +285,22 @@ def search1(sql):
                 name = input("Enter a name or press enter to continue: ")
 
         if name != None and len(licence_no) == 0:
-        	string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-        	Results = (sql.exeAndFetch(string.format(name)))
+                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+                Results = (sql.exeAndFetch(string.format(name)))
 
         print("\n")
         if len(Results) == 0:
-        	print("No person found")
-        	print("\n")
+                print("No person found")
+                print("\n")
 
         for result in Results:
-        	print("Name: ", result [0])
-        	print("Licence_no: ", result[1])
-        	print("Address: ", result[2])
-        	print("Birthday: ", result[3])
-        	print("Driving Class: ", result[4])
-        	print("Driving Condition: ", result[5])
-        	print("Expiring Date: ", result[6])
+                print("Name: ", result [0])
+                print("Licence_no: ", result[1])
+                print("Address: ", result[2])
+                print("Birthday: ", result[3])
+                print("Driving Class: ", result[4])
+                print("Driving Condition: ", result[5])
+                print("Expiring Date: ", result[6])
         print("\n")
         return
 
@@ -312,31 +312,31 @@ def search2(sql):
         if len(licence_no) != 0:
           #These Queries must list everything from ticket (not sure if t.(*) will select all) from
           #ticket given the sin of the person or their drivers licence number
-        	string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
-        	Results = (sql.exeAndFetch(string.format(licence_no)))
-        	sin = None
+                string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
+                Results = (sql.exeAndFetch(string.format(licence_no)))
+                sin = None
         else:
-        	sin = input("Enter a valid sin: ")
+                sin = input("Enter a valid sin: ")
 
         if sin != None  and len(licence_no) == 0:
-        	string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
-        	Results = (sql.exeAndFetch(string.format(sin)))
+                string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
+                Results = (sql.exeAndFetch(string.format(sin)))
 
         print("\n")
         if len(Results) == 0:
-        	print("No tickets found")
-        	print("\n")
+                print("No tickets found")
+                print("\n")
 
         for result in Results:
-        	print("Ticket Number: ", result[0])
-        	print("Violator Number: ", result[1])
-        	print("Vehicle Identification: ", result[2])
-        	print("Office Number: ", result[3])
-        	print("Ticket Type: ", result[4])
-        	print("Ticket Date: ", result[5])
-        	print("Place: ", result[6])
-        	print("Descriptions: ", result[7])
-        	print("\n")
+                print("Ticket Number: ", result[0])
+                print("Violator Number: ", result[1])
+                print("Vehicle Identification: ", result[2])
+                print("Office Number: ", result[3])
+                print("Ticket Type: ", result[4])
+                print("Ticket Date: ", result[5])
+                print("Place: ", result[6])
+                print("Descriptions: ", result[7])
+                print("\n")
         print("\n")
         return
 
@@ -355,27 +355,31 @@ def search3(sql):
 
         print("\n")
         for result1 in Results1:
-        	for result2 in Results2:
-        		print("Amount of Sales: ", result1[0])
-        		print("Average Sale Price: ", result1[1])
-        		print("Amount of Infractions: ", result2[0])
+                for result2 in Results2:
+                        print("Amount of Sales: ", result1[0])
+                        print("Average Sale Price: ", result1[1])
+                        print("Amount of Infractions: ", result2[0])
         print("\n")
         return
 
-def getString(message, maxLen = maxInt, minLen = 0, contains = None)
-	valid = False
-	while !valid:
-		valid = True
-		string = input(message)
-		if len(string) < minLen || len(string) >> maxLen:
-			valid = False
-		if contains != None:
-			for char in string:
-				if char not in contains:
-					valid = False
-		if !valid:
-			print("Input invalid!")
-	return string
+def getString(message, maxLen = None, minLen = 0, contains = None):
+        valid = False
+        while not valid:
+                valid = True
+                string = input(message)
+                if minLen is not None:
+                        if len(string) < minLen:
+                                valid = False
+                if maxLen is not None:
+                        if len(string) > maxLen:
+                                valid = False
+                if contains is not None:
+                        for char in string:
+                                if char not in contains:
+                                        valid = False
+                if not valid:
+                        print("Input invalid!")
+        return string
 
 
 
