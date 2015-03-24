@@ -46,9 +46,9 @@ def getString(message, maxLen = None, minLen = 0, contains = None):
 
 def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
         valid = False
+        number = None
         while not valid:
                 valid = True
-                number = None
                 try:
                         number = eval(input(message))
                 except:
