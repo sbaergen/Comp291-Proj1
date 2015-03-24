@@ -102,13 +102,15 @@ def newVehicle(sql):
         while addOwner:
                 # need to check here if the vehicle already has a primary owner
 
-                Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,[y,n])#char(1)
+                Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'yn')#char(1)
+
                 #contains (y or n)
                 Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
                 #UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
+
                         Sin = sqlFile.getString("Enter the sin of the owner: ",15) #char(15) #unique sql check
                         Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
                         Height = sqlFile.getNumber("Enter the height of the owner: ",5) #number(5,2)
@@ -116,8 +118,9 @@ def newVehicle(sql):
                         Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
                         Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
                         Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
-                        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,[m,f]) #char #contains (m or f)
+                        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,'mf') #char #contains (m or f)
                         Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
+
                         string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
                         sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 
@@ -140,7 +143,7 @@ def autoTrans(sql):
 
         Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15)
         Buyer = sqlFile.getString("Enter the sin of the buyer: ",15) #char(15)
-        ## Second_Buyer = sqlFile.getString("Would you like to enter a second Buyer? (y/n) : ",1,0,[y,n])  # ask for more buyers? & which is primary owner?
+        ## Second_Buyer = sqlFile.getString("Would you like to enter a second Buyer? (y/n) : ",1,0,'yn')  # ask for more buyers? & which is primary owner?
         Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
         Date =sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
         Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
@@ -182,7 +185,7 @@ def autoTrans(sql):
 #                                Eyecolor = sqlFile.getString("Enter the eye color of the buyer: ",10) #varchar(10)
 #                                Haircolor = sqlFile.getString("Enter the hair color of the buyer: ",10) #varchar(10)
 #                                Address = sqlFile.getString("Enter the address of the buyer: ",50) #varchar2(50)
-#                                Gender = sqlFile.getString("Enter the gender of the buyer: ",1,0,[m,f]) #CHAR
+#                                Gender = sqlFile.getString("Enter the gender of the buyer: ",1,0,'mf') #CHAR
 #                                Birthday =sqlFile.getDate("Enter the birthday of the buyer in form 'YYYY-MM-DD': ") #DATE
 #                                string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 #                                sql.execute(string.format(Buyer,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
@@ -195,7 +198,7 @@ def autoTrans(sql):
 #                        valid = True
 
 #        while True:
-#                addMore = sqlFile.getString("Add another owner? (y/n): ",1,0,[y,n])
+#                addMore = sqlFile.getString("Add another owner? (y/n): ",1,0,'yn')
 #                if addMore.lower() == 'y':
 #                        addOwner = True
 #                        break
