@@ -47,15 +47,19 @@ def getString(message, maxLen = None, minLen = 0, contains = None):
 def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
 	valid = False
 	while not valid:
-		valid = True 
-		number = input(message)
+		valid = True
+                number = None
+                try:
+                        number = eval(input(message))
+                except:
+                        continue
 		if minLen is not None:
 			if len(number) < minLen:
 				valid = False
 		if maxLen is not None:
 			if len(number) > maxLen:
 				valid = False
-		if restriction is not None:
+		if maxValue is not None:
 			if number > maxValue:
 				valid = False
 		if not valid:
