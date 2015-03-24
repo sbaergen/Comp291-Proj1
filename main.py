@@ -1,7 +1,5 @@
 import getpass
 import sql as sqlFile
-# import os,sys
-#import Image
 
 # This will display the menu and handle input to the menu
 def main():
