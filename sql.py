@@ -25,6 +25,25 @@ def getDate(message):
                         print("Incorrect data format, should be YYYY-MM-DD")
         return None
 
+def getString(message, maxLen = None, minLen = 0, contains = None):
+        valid = False
+        while not valid:
+                valid = True
+                string = input(message)
+                if minLen is not None:
+                        if len(string) < minLen:
+                                valid = False
+                if maxLen is not None:
+                        if len(string) > maxLen:
+                                valid = False
+                if contains is not None:
+                        for char in string:
+                                if char not in contains:
+                                        valid = False
+                if not valid:
+                        print("Input invalid!")
+        return string
+
 
 class SqlConnection:
         def __init__(self, user, passw):
