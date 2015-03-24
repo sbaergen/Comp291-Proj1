@@ -44,6 +44,21 @@ def getString(message, maxLen = None, minLen = 0, contains = None):
                         print("Input invalid!")
         return string
 
+def getNumber(message, maxLen = None, minLen = 0):
+	valid = False
+	while not valid:
+		valid = True 
+		number = input(message)
+		if minLen != None:
+			if len(number) < minLen:
+				valid = False
+		if maxLen != None:
+			if len(number) > maxLen:
+				valid = False
+		if not valid:
+			print("Input invalid!")
+			print("\n")
+	return number
 
 class SqlConnection:
         def __init__(self, user, passw):
