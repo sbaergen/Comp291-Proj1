@@ -56,16 +56,22 @@ Please Select from the following:
                         except:
                                 print ("Invalid Input!", end = " ")
                 if choice == 1:
+                        print("New Vehicle Registration:")
                         newVehicle(sql)
                 elif choice == 2:
+                        print("Auto Transaction:")
                         autoTrans(sql)
                 elif choice == 3:
+                        print("Licence Registration:")
                         licenceReg(sql)
                 elif choice == 4:
+                        print("Violation Record:")
                         violationRec(sql)
                 elif choice == 5:
+                        print("Search Engine:")
                         searchEngine(sql)
                 elif choice == 6:
+                        print("Good Bye.")
                         break
                 else:
                         continue
@@ -81,8 +87,6 @@ Please Select from the following:
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
-        print("NEW VEHICLE REGISTRATION")
-        print("")
         serial_no = input("Enter serial_no of vehicle: ")#char (15) #unique sql check
         maker = input("Enter the make of the vehicle: ") #varchar (20)
         model = input("Enter the model of the vehicle: ") #varchar (20)
@@ -206,11 +210,7 @@ def autoTrans(sql):
 
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
-
-        print (string + " is now ...")  # debugging
         Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15)
-        print(Licence_no)  # debugging
-
 
         Person = input("Enter the sin of the person: ") #char(15)
         Class = input("Enter the class of driving licence of the person: ") #varchar(10)
