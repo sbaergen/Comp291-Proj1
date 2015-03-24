@@ -1,6 +1,6 @@
-emaimport getpass
+import getpass
 import sql as sqlFile
-# import os,sys
+#import os,sys
 #import Image
 
 # This will display the menu and handle input to the menu
@@ -234,7 +234,7 @@ def violationRec(sql):
         office = getString("Enter the office number: ",15) #char(15)
         typeTicket = getString("Enter the type of ticket: ",10) #char 10 #check in other type
         
-	date = getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
+        date = getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
         place = getString("Enter the location of the infraction: ",20) # varchar(20)
         descr = getString("Enter a detailed description of the offence: ",1024) #varchar(1024)
 

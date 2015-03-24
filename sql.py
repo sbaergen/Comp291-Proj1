@@ -55,7 +55,7 @@ def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
 		if maxLen is not None:
 			if len(number) > maxLen:
 				valid = False
-		if restriction is not None:
+		if maxValue is not None:
 			if number > maxValue:
 				valid = False
 		if not valid:
