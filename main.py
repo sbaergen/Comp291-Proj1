@@ -140,74 +140,30 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-
         Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15)
-        Buyer = sqlFile.getString("Enter the sin of the buyer: ",15) #char(15)
-        ## Second_Buyer = sqlFile.getString("Would you like to enter a second Buyer? (y/n) : ",1,0,'yn')  # ask for more buyers? & which is primary owner?
         Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
-        Date =sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
+        Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
         Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
         string = "SELECT MAX(transaction_id) FROM auto_sale s"
         TransactionId = sql.exeAndFetch(string)[0][0] + 1  # (int if nessesary)
 
-        string = "delete from owner where (owner_id = '{:s}' and vehicle_id = '{:s}')"
-        string = string.format(Seller, Vehicle)
+        string = "delete from owner where (vehicle_id = '{:s}')"
+        sql.execute(string.format(Vehicle))
 
-        sql.execute(string)
         primaryExists = False
-        buyerNum = int(input("Enter the number of buyers: "))
+        buyerNum = sqlFile.getNumber("Enter the number of buyers: ")
         for _ in range(buyerNum):
                 Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
-                primary = sqlFile.getString("Is this owner the primary owner? ",1,0,[y,n])
+                primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'yn')
                 if primary.lower() == 'y':
-                         string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
+                         string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
                          string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
                          sql.execute(string)
                          primaryExists = True
-                         string = "insert into owner values('{:s}','{:s}','{:s}')"
-                         string = string.format(Buyer, Vehicle, 'y')
-                         sql.execute(string)
-                elif primary.lower() == 'n':
-                         string = "insert into owner values('{:s}','{:s}','{:s}')"
-                         string = string.format(Buyer, Vehicle, 'n')
-                         sql.execute(string)
-
-
-#        valid = False
-#        while !valid
-#                string = string.format(Buyer)
-#                        newBuyer = input ("Buyer not found. Would you like to add them? (y/n)"
-#                        if newBuyer.lower() == 'y':
-#                                Name = sqlFile.getString("Enter the name of the buyer: ",40) #varchar(40)
-#                                Height = sqlFile.getNumber("Enter the height of the buyer: ",5) #number(5,2)
-#                                Weight = sqlFile.getNumber("Enter the weight of the buyer: ",5) #number(5,2)
-#                                Eyecolor = sqlFile.getString("Enter the eye color of the buyer: ",10) #varchar(10)
-#                                Haircolor = sqlFile.getString("Enter the hair color of the buyer: ",10) #varchar(10)
-#                                Address = sqlFile.getString("Enter the address of the buyer: ",50) #varchar2(50)
-#                                Gender = sqlFile.getString("Enter the gender of the buyer: ",1,0,'mf') #CHAR
-#                                Birthday =sqlFile.getDate("Enter the birthday of the buyer in form 'YYYY-MM-DD': ") #DATE
-#                                string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
-#                                sql.execute(string.format(Buyer,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
-#                                valid = True
-#                        elif newBuyer.lower() == 'n':
-#                                Buyer = sqlFile.getString("Enter the sin of the buyer",15)
-#                        else:
-#                                print("Invalid input, please enter either the letter y or n")
-#                else:
-#                        valid = True
-
-#        while True:
-#                addMore = sqlFile.getString("Add another owner? (y/n): ",1,0,'yn')
-#                if addMore.lower() == 'y':
-#                        addOwner = True
-#                        break
-#                elif addMore.lower() =='n':
-#                        addOwner = False
-#                        break
-#                else:
-#                        print("Invalid input, please enter either the letter y or n")
-
+                string = "insert into owner values('{:s}','{:s}','{:s}')"
+                string = string.format(Buyer, Vehicle, primary)
+                sql.execute(string)
 
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
