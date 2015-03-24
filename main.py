@@ -171,8 +171,8 @@ def licenceReg(sql):
 
         Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
         Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
-        Issuing_date =sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
-        Expiry_date =sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
+        Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
+        Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
         # File_name = getPic("Enter the path to the picture: ") #blob
         Picture = sqlFile.getPic("Enter the path to the picture: ")
 
