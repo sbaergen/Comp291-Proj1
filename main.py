@@ -1,7 +1,5 @@
 import getpass
 import sql as sqlFile
-#import os,sys
-#import Image
 
 # This will display the menu and handle input to the menu
 def main():
@@ -87,12 +85,12 @@ Please Select from the following:
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
-        serial_no = getString("Enter serial_no of vehicle: ",15)#char (15) #unique sql check
-        maker = getString("Enter the make of the vehicle: ",20) #varchar (20)
-        model = getString("Enter the model of the vehicle: ",20) #varchar (20)
-        year = getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
-        color = getString("Enter the color of the vehicle: ",10) #varchar(10)
-        vehicleType = getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5)#integer #sql valid type
+        serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15) #unique sql check
+        maker = sqlFile.getString("Enter the make of the vehicle: ",20) #varchar (20)
+        model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
+        year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
+        color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
+        vehicleType = sqlFile.getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5)#integer #sql valid type
 
 
         # todo: lets check all of the params
@@ -104,22 +102,22 @@ def newVehicle(sql):
         while addOwner:
                 # need to check here if the vehicle already has a primary owner
 
-                Primary_Ownership = getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,[y,n])#char(1)
+                Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,[y,n])#char(1)
                 #contains (y or n)
-                Owner = getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
+                Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
                 #UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
-                        Sin = getString("Enter the sin of the owner: ",15) #char(15) #unique sql check
-                        Name = getString("Enter the name of the owner: ",40) #varchar(40)
-                        Height = getNumber("Enter the height of the owner: ",5) #number(5,2)
-                        Weight = getNumber("Enter the weight of the owner: ",5) #number(5,2)
-                        Eyecolor = getString("Enter the eye color of the owner: ",10) #varchar(10)
-                        Haircolor = getString("Enter the hair color of the owner: ",10) #varchar(10)
-                        Address = getString("Enter the address of the owner: ",50) #varchar2(50)
-                        Gender = getString("Enter the gender of the owner: ",1,0,[m,f]) #char #contains (m or f)
-                        Birthday = getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
+                        Sin = sqlFile.getString("Enter the sin of the owner: ",15) #char(15) #unique sql check
+                        Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
+                        Height = sqlFile.getNumber("Enter the height of the owner: ",5) #number(5,2)
+                        Weight = sqlFile.getNumber("Enter the weight of the owner: ",5) #number(5,2)
+                        Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
+                        Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
+                        Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
+                        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,[m,f]) #char #contains (m or f)
+                        Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
                         string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
                         sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 
@@ -141,11 +139,11 @@ def newVehicle(sql):
 def autoTrans(sql):
 
         Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15)
-        Buyer = getString("Enter the sin of the buyer: ",15) #char(15)
-        ## Second_Buyer = getString("Would you like to enter a second Buyer? (y/n) : ",1,0,[y,n])  # ask for more buyers? & which is primary owner?
-        Seller = getString("Enter the sin of the seller: ",15) #char(15)
-        Date = getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
-        Price = getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
+        Buyer = sqlFile.getString("Enter the sin of the buyer: ",15) #char(15)
+        ## Second_Buyer = sqlFile.getString("Would you like to enter a second Buyer? (y/n) : ",1,0,[y,n])  # ask for more buyers? & which is primary owner?
+        Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+        Date =sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
+        Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
         string = "SELECT MAX(transaction_id) FROM auto_sale s"
         TransactionId = sql.exeAndFetch(string)[0][0] + 1  # (int if nessesary)
@@ -157,8 +155,8 @@ def autoTrans(sql):
         primaryExists = False
         buyerNum = int(input("Enter the number of buyers: "))
         for _ in range(buyerNum):
-                Buyer = getString("Enter the sin of the buyer: ",15)
-                primary = getString("Is this owner the primary owner? ",1,0,[y,n])
+                Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
+                primary = sqlFile.getString("Is this owner the primary owner? ",1,0,[y,n])
                 if primary.lower() == 'y':
                          string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:f})"
                          string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
@@ -178,26 +176,26 @@ def autoTrans(sql):
 #                string = string.format(Buyer)
 #                        newBuyer = input ("Buyer not found. Would you like to add them? (y/n)"
 #                        if newBuyer.lower() == 'y':
-#                                Name = getString("Enter the name of the buyer: ",40) #varchar(40)
-#                                Height = getNumber("Enter the height of the buyer: ",5) #number(5,2)
-#                                Weight = getNumber("Enter the weight of the buyer: ",5) #number(5,2)
-#                                Eyecolor = getString("Enter the eye color of the buyer: ",10) #varchar(10)
-#                                Haircolor = getString("Enter the hair color of the buyer: ",10) #varchar(10)
-#                                Address = getString("Enter the address of the buyer: ",50) #varchar2(50)
-#                                Gender = getString("Enter the gender of the buyer: ",1,0,[m,f]) #CHAR
-#                                Birthday = getDate("Enter the birthday of the buyer in form 'YYYY-MM-DD': ") #DATE
+#                                Name = sqlFile.getString("Enter the name of the buyer: ",40) #varchar(40)
+#                                Height = sqlFile.getNumber("Enter the height of the buyer: ",5) #number(5,2)
+#                                Weight = sqlFile.getNumber("Enter the weight of the buyer: ",5) #number(5,2)
+#                                Eyecolor = sqlFile.getString("Enter the eye color of the buyer: ",10) #varchar(10)
+#                                Haircolor = sqlFile.getString("Enter the hair color of the buyer: ",10) #varchar(10)
+#                                Address = sqlFile.getString("Enter the address of the buyer: ",50) #varchar2(50)
+#                                Gender = sqlFile.getString("Enter the gender of the buyer: ",1,0,[m,f]) #CHAR
+#                                Birthday =sqlFile.getDate("Enter the birthday of the buyer in form 'YYYY-MM-DD': ") #DATE
 #                                string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 #                                sql.execute(string.format(Buyer,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 #                                valid = True
 #                        elif newBuyer.lower() == 'n':
-#                                Buyer = getString("Enter the sin of the buyer",15)
+#                                Buyer = sqlFile.getString("Enter the sin of the buyer",15)
 #                        else:
 #                                print("Invalid input, please enter either the letter y or n")
 #                else:
 #                        valid = True
 
 #        while True:
-#                addMore = getString("Add another owner? (y/n): ",1,0,[y,n])
+#                addMore = sqlFile.getString("Add another owner? (y/n): ",1,0,[y,n])
 #                if addMore.lower() == 'y':
 #                        addOwner = True
 #                        break
@@ -212,10 +210,10 @@ def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
         Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15) (if nessesary)
 
-        Person = getString("Enter the sin of the person: ",15) #char(15)
-        Class = getString("Enter the class of driving licence of the person: ",10) #varchar(10)
-        Issuing_date = getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
-        Expiry_date = getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
+        Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
+        Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
+        Issuing_date =sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
+        Expiry_date =sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
         # File_name = getPic("Enter the path to the picture: ") #blob
         Picture = sqlFile.getPic("Enter the path to the picture: ")
 
@@ -229,14 +227,14 @@ def licenceReg(sql):
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
         ticket_no = 1 + sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  #int (if neccesary)
-        violator = getString("Enter the sin of the violator: ",15) #char(15)
-        vehicle = getString("Enter the serial number of the vehicle : ",15) #char(15)
-        office = getString("Enter the office number: ",15) #char(15)
-        typeTicket = getString("Enter the type of ticket: ",10) #char 10 #check in other type
-        
-        date = getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
-        place = getString("Enter the location of the infraction: ",20) # varchar(20)
-        descr = getString("Enter a detailed description of the offence: ",1024) #varchar(1024)
+        violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
+        vehicle = sqlFile.getString("Enter the serial number of the vehicle : ",15) #char(15)
+        office = sqlFile.getString("Enter the office number: ",15) #char(15)
+        typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+
+        date = sqlFile.getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
+        place = sqlFile.getString("Enter the location of the infraction: ",20) # varchar(20)
+        descr = sqlFile.getString("Enter a detailed description of the offence: ",1024) #varchar(1024)
 
         #This simply inserts the ticket into our database
         string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
@@ -272,7 +270,7 @@ def searchEngine(sql):
 def search1(sql):
         print("\n")
         print("Personal information search\n")
-        licence_no = getString("Enter a licence_no or press enter to input a name: ",15)
+        licence_no = sqlFile.getString("Enter a licence_no or press enter to input a name: ",15)
 
          #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
          #licence expiry date of a person given their name or licence_no
@@ -283,7 +281,7 @@ def search1(sql):
                 Results = (sql.exeAndFetch(string.format(licence_no)))
                 name = None
         else:
-                name = getString("Enter a name or press enter to choose a new search: ",40)
+                name = sqlFile.getString("Enter a name or press enter to choose a new search: ",40)
 
         if name != None and len(licence_no) == 0:
                 string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
@@ -309,14 +307,14 @@ def search1(sql):
 def search2(sql):
         print("\n")
         print("Personal Violation Record\n")
-        licence_no = getString("Enter a licence number or press enter to input a sin: ",15)
+        licence_no = sqlFile.getString("Enter a licence number or press enter to input a sin: ",15)
         if len(licence_no) != 0:
           #ticket given the sin of the person or their drivers licence number
                 string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
                 Results = (sql.exeAndFetch(string.format(licence_no)))
                 sin = None
         else:
-                sin = getString("Enter a sin or press enter to choose a new search: ",15)
+                sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
 
         if sin != None  and len(licence_no) == 0:
                 string = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
@@ -343,7 +341,7 @@ def search2(sql):
 def search3(sql):
         print("\n")
         print("Vehicle History\n")
-        serial_no = getString("Enter a serial_no or press Enter to choose a new search type: ",15)
+        serial_no = sqlFile.getString("Enter a serial_no or press Enter to choose a new search type: ",15)
 
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
