@@ -338,14 +338,12 @@ def newPerson(sql, Sin=None):
         if Sin is None:
                 Sin = sqlFile.getString("Enter the sin of the person:",15) #char(15)
         Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
-        Height = sqlFile.getNumber("Enter the height of the owner in cm: ",5) #number(5,2)
-        print(type(Height))
-        Weight = sqlFile.getNumber("Enter the weight of the owner in kg: ",5) #number(5,2)
-        print(type(Weight))
+        Height = sqlFile.getNumber("Enter the height of the owner: ",5) #number(5,2)
+        Weight = sqlFile.getNumber("Enter the weight of the owner: ",5) #number(5,2)
         Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
         Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
         Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
-        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,'mf') #char #contains (m or f)
+        Gender = sqlFile.getString("Enter the gender of the owner (m or f): ",1,0,'mf') #char #contains (m or f)
         Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
 
         string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
