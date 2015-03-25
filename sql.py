@@ -64,7 +64,6 @@ def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
                                 valid = False
                 if not valid:
                         print("Input invalid!")
-                        print("\n")
         return number
 
 class SqlConnection:

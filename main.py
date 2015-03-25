@@ -90,10 +90,8 @@ def newVehicle(sql):
         model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
         year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
         color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
-        vehicleType = sqlFile.getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5)#integer #sql valid type
-
-
-        # todo: lets check all of the params
+        # todo vehicleType input, should we be restricting it???
+        vehicleType = sqlFile.getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5)#integer
 
         string = "insert into vehicle values('{:s}','{:s}','{:s}',{:d},'{:s}',{:d})"
         sql.execute(string.format(serial_no, maker, model, year, color, vehicleType))
@@ -106,27 +104,14 @@ def newVehicle(sql):
                         if Primary_Ownership.lower() == 'y':
                                 primaryDone = True
                 else:
-                        Primary_Ownership = 'n'        
+                        Primary_Ownership = 'n'
                 #contains (y or n)
                 Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
                 #UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 
                 string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
                 if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
-
-                        Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
-                        Height = sqlFile.getNumber("Enter the height of the owner in cm: ",5) #number(5,2)
-                        print(type(Height))
-                        Weight = sqlFile.getNumber("Enter the weight of the owner in kg: ",5) #number(5,2)
-                        print(type(Weight))
-                        Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
-                        Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
-                        Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
-                        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,'mf') #char #contains (m or f)
-                        Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
-
-                        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
-                        sql.execute(string.format(Owner,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+                        newPerson(sql, Owner)
 
                 string = "insert into owner values ('{:s}','{:s}','{:s}')"
                 string = string.format(Owner, serial_no, Primary_Ownership)
@@ -291,14 +276,14 @@ def search2(sql):
 		sin = None
 	else:
 		sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
-		
+
 	string2 = "SELECT d.licence_no FROM drive_licence d WHERE d.licence_no = '{:s}'"
 
 	if sin != None  and len(licence_no) == 0:
 		assertion2 = (sql.exeAndFetch(string2.format(sin)))
 		string4 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
 		Results = (sql.exeAndFetch(string4.format(sin)))
-		
+
 	if len(assertion1) == 0 and len(assertion2) == 0:
 		print("Person does not exist")
 		print("\n")
@@ -348,5 +333,22 @@ def search3(sql):
 			print("Amount of Infractions: ", result2[0])
 	print("\n")
 	return
+
+def newPerson(sql, Sin=None):
+        if Sin is None:
+                Sin = sqlFile.getString("Enter the sin of the person:",15) #char(15)
+        Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
+        Height = sqlFile.getNumber("Enter the height of the owner in cm: ",5) #number(5,2)
+        print(type(Height))
+        Weight = sqlFile.getNumber("Enter the weight of the owner in kg: ",5) #number(5,2)
+        print(type(Weight))
+        Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
+        Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
+        Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
+        Gender = sqlFile.getString("Enter the gender of the owner: ",1,0,'mf') #char #contains (m or f)
+        Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
+
+        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
+        sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
 
 main()  # run the main function
