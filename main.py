@@ -85,19 +85,29 @@ Please Select from the following:
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
-	serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15) #unique sql check
+	while True:
+		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15)
+		if unique(sql, "vehicle v", "v.serial_no = '{:s}'".format(serial_no)):
+			break
+		else:
+			print("Error: Vehicle already exists!")
+			print("\n")
+			return
 	maker = sqlFile.getString("Enter the make of the vehicle: ",20) #varchar (20)
 	model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
 	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
 	color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
-	vehicleType = sqlFile.getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5,1)#integer
-
+	while True:
+		vehicleType = sqlFile.getNumber("Enter the integer type of the vehicle: ")#integer
+		if unique(sql, "vehicle_type v", "v.type_id = {:d}".format(vehicleType)):
+			print ("Invalid Vehicle Type!")
+		else:
+			break
 	string = "insert into vehicle values('{:s}','{:s}','{:s}',{:d},'{:s}',{:d})"
 	sql.execute(string.format(serial_no, maker, model, year, color, vehicleType))
 	primaryDone = False
 	addOwner = True
 	while addOwner:
-		# need to check here if the vehicle already has a primary owner
 		if not primaryDone:
 			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'ynYN')#char(1)
 			if Primary_Ownership.lower() == 'y':
@@ -109,9 +119,6 @@ def newVehicle(sql):
 		#UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 		if unique(sql, "people p", "p.sin = {:s}".format(Owner)):
 			newPerson(sql, Owner)
-		#string = "SELECT o.owner_id FROM owner o WHERE o.owner_id = {:s}".format(Owner)
-		#if len(sql.exeAndFetch(string)) == 0:  # check a person exists with that SIN, if not add them
-		#	newPerson(sql, Owner)
 
 		string = "insert into owner values ('{:s}','{:s}','{:s}')"
 		string = string.format(Owner, serial_no, Primary_Ownership)
@@ -129,6 +136,7 @@ def newVehicle(sql):
 				else:
 					print("Error: Need to enter a primary owner!")
 					addOwner = True
+					break
 			else:
 				print("Invalid input, please enter either the letter y or n")
 
@@ -374,7 +382,6 @@ def newPerson(sql, Sin=None):
 
 def unique(sql, table, conditionMessage):
 	string = "SELECT * FROM {:s} WHERE {:s}"
-	print(string.format(table, conditionMessage))
 	result = sql.exeAndFetch(string.format(table, conditionMessage))
 	if not len(result):
 		return True
