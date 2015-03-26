@@ -180,7 +180,22 @@ def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
 	Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15) (if nessesary)
 	# TODO: CHECK THAT PERSON EXISTS
-	Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
+	Person = None
+	while True:
+		Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
+		if not unique(sql,"drive_licence d", "d.sin = '{:s}'".format(Person)):
+			print("\n")
+			print("Person already has a licence")
+			print("\n")
+			return
+
+		if unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
+			print("\n")
+			print("Person not found, adding person")
+			newPerson(sql,Person)
+			break
+		else:
+			break
 	Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
 	Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
 	# TODO: CHECK THAT EXPIRY DATE IS AFTER ISSUING DATE
@@ -366,14 +381,14 @@ def newPerson(sql, Sin=None):
 			isUnique = unique(sql, "People p", "p.sin = '{:s}'".format(Sin))
 			if not isUnique:
 				print("Person already exists!")				
-	Name = sqlFile.getString("Enter the name of the owner: ",40) #varchar(40)
-	Height = sqlFile.getNumber("Enter the height of the owner: ",5) #number(5,2)
-	Weight = sqlFile.getNumber("Enter the weight of the owner: ",5) #number(5,2)
-	Eyecolor = sqlFile.getString("Enter the eye color of the owner: ",10) #varchar(10)
-	Haircolor = sqlFile.getString("Enter the hair color of the owner: ",10) #varchar(10)
-	Address = sqlFile.getString("Enter the address of the owner: ",50) #varchar2(50)
-	Gender = sqlFile.getString("Enter the gender of the owner (m or f): ",1,0,'mf') #char #contains (m or f)
-	Birthday =sqlFile.getDate("Enter the birthday of the owner in form 'YYYY-MM-DD': ") #date
+	Name = sqlFile.getString("Enter the name of the person: ",40) #varchar(40)
+	Height = sqlFile.getNumber("Enter the height of the person: ",5) #number(5,2)
+	Weight = sqlFile.getNumber("Enter the weight of the person: ",5) #number(5,2)
+	Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
+	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
+	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mf') #char #contains (m or f)
+	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 	sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
