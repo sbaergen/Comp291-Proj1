@@ -99,7 +99,7 @@ def newVehicle(sql):
 	while addOwner:
 		# need to check here if the vehicle already has a primary owner
 		if not primaryDone:
-			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'yn')#char(1)
+			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'ynYN')#char(1)
 			if Primary_Ownership.lower() == 'y':
 				primaryDone = True
 		else:
@@ -149,10 +149,11 @@ def autoTrans(sql):
 
 	primaryExists = False
 	buyerNum = sqlFile.getNumber("Enter the number of buyers: ")
+	#TODO: CHECK FOR AT LEAST PRIMARY OWNER
 	for _ in range(buyerNum):
 		Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
-		primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'yn')
-		if primary.lower() == 'y':
+		primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN')
+		if primary.lower() == 'y': # TODO: NEEDS CHECKS FOR INSERTIONS
 			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
 			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
 			 sql.execute(string)
@@ -170,12 +171,14 @@ def autoTrans(sql):
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
 	Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15) (if nessesary)
-
+	# TODO: CHECK THAT PERSON EXISTS
 	Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
 	Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
 	Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
+	# TODO: CHECK THAT EXPIRY DATE IS AFTER ISSUING DATE
 	Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
 	# File_name = getPic("Enter the path to the picture: ") #blob
+	# TODO: CHECK THAT PICTURE EXISTS
 	Picture = sqlFile.getPic("Enter the path to the picture: ")
 
 	# prepare memory for operation parameters  # i found I didn't need to do this!
@@ -189,6 +192,7 @@ def licenceReg(sql):
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
+	#TODO: CHECKS NEED TO BE DONE
 	ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int (if neccesary)
 	violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
 	vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
