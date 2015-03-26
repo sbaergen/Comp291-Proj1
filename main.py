@@ -330,7 +330,6 @@ def search1(sql):
 
 
 def search2(sql):
-	print("\n")
 	print("Personal Violation Record\n")
 	assertion1 = ''
 	assertion2 = ''
@@ -342,6 +341,11 @@ def search2(sql):
 		string3 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
 		Results = (sql.exeAndFetch(string3.format(licence_no)))
 		sin = None
+		if len(assertion1) == 0:
+			print("\n")
+			print("Licence not found")
+			print("\n")
+			return
 	else:
 		sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
 
@@ -352,13 +356,12 @@ def search2(sql):
 		string4 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
 		Results = (sql.exeAndFetch(string4.format(sin)))
 
-	if len(assertion1) == 0 and len(assertion2) == 0:
-		print("\n")
-		print("Person does not exist")
-		print("\n")
-		return
+		if len(assertion2) == 0:
+			print("\n")
+			print("Person does not exist")
+			print("\n")
+			return
 
-	print("\n")
 	if len(Results) == 0:
 		print("No tickets found")
 		print("\n")
@@ -374,7 +377,6 @@ def search2(sql):
 		print("Place: ", result[6])
 		print("Descriptions: ", result[7])
 		print("\n")
-	print("\n")
 	return
 
 def search3(sql):
