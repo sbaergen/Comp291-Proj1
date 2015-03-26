@@ -144,8 +144,24 @@ def newVehicle(sql):
 	print("\n")
 
 def autoTrans(sql):
-	Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
-	Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+	Vehicle = None
+	while(True):
+		Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
+		if not (unique(sql, "vehicle", "serial_no = '{:s}'".format(Vehicle))):
+			break
+		else:
+			tryAgain = input("Warning vehicle doen't exist! Try again? (y/n): ")
+			if(tryAgain.lower() == "n"):
+				return None
+	Seller = None
+	while(True):
+		Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+		if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
+			break
+		else:
+			tryAgain = input("Warning seller doesn't exist! Try again? (y/n): ")
+			if(tryAgain.lower() == "n"):
+				return None
 	Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
 	Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
@@ -156,12 +172,28 @@ def autoTrans(sql):
 	sql.execute(string.format(Vehicle))
 
 	primaryExists = False
-	buyerNum = sqlFile.getNumber("Enter the number of buyers: ")
-	#TODO: CHECK FOR AT LEAST PRIMARY OWNER
-	for _ in range(buyerNum):
-		Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
-		primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN')
-		if primary.lower() == 'y': # TODO: NEEDS CHECKS FOR INSERTIONS
+	buyerNum = sqlFile.getNumber("Enter the number of buyers: ", minValue = 1)
+	for x in range(buyerNum):
+		Buyer = None
+		while(True):
+			Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
+			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
+				break
+			else:
+				tryAgain = input("Warning buyer doesn't exist! Create a new person? (y/n): ")
+				if(tryAgain.lower() == "y"):
+					newPerson(sql, Buyer)
+				else:
+					tryAgain = input("Do you want to quit? (y/n): ")
+					if(tryAgain.lower() == "y"):
+						return None
+		primary = None
+		if (x == buyerNum - 1) and (not primaryExists):
+			print("Automatically setting this to be the primary owner.")
+			primary = 'y'
+		else:
+			primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
+		if primary.lower() == 'y':
 			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
 			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
 			 sql.execute(string)
@@ -382,7 +414,7 @@ def newPerson(sql, Sin=None):
 			Sin = sqlFile.getString("Enter the sin of the person:",15) #char(15)
 			isUnique = unique(sql, "People p", "p.sin = '{:s}'".format(Sin))
 			if not isUnique:
-				print("Person already exists!")				
+				print("Person already exists!")
 	Name = sqlFile.getString("Enter the name of the person: ",40) #varchar(40)
 	Height = sqlFile.getNumber("Enter the height of the person: ",5) #number(5,2)
 	Weight = sqlFile.getNumber("Enter the weight of the person: ",5) #number(5,2)
@@ -404,10 +436,5 @@ def unique(sql, table, conditionMessage):
 		return True
 	else:
 		return False
-
-
-
-
-
 
 main()  # run the main function
