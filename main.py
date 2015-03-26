@@ -180,9 +180,10 @@ def autoTrans(sql):
 			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
 				break
 			else:
-			tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
+				tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
 				if(tryAgain.lower() == "y"):
 					newPerson(sql, Buyer)
+					break
 				else:
 					tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
 					if(tryAgain.lower() == "y"):
@@ -191,8 +192,10 @@ def autoTrans(sql):
 		if (x == buyerNum - 1) and (not primaryExists):
 			print("Automatically setting this to be the primary owner.")
 			primary = 'y'
-		else:
+		elif not primaryExists:
 			primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
+		else:
+			primary = 'n'
 		if primary.lower() == 'y':
 			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
 			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
@@ -205,6 +208,8 @@ def autoTrans(sql):
 			 string = "insert into owner values('{:s}','{:s}','{:s}')"
 			 string = string.format(Buyer, Vehicle, 'n')
 			 sql.execute(string)
+
+	print("Auto Transaction Completed!")
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
@@ -419,13 +424,13 @@ def newPerson(sql, Sin=None):
 	Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
 	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
 	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
-	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mf') #char #contains (m or f)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF') #char #contains (m or f)
 	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 	sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+	print('\n')
 	print("Person Added!")
-	print("\n")
 
 def unique(sql, table, conditionMessage):
 	string = "SELECT * FROM {:s} WHERE {:s}"
