@@ -90,7 +90,6 @@ def newVehicle(sql):
         model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
         year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
         color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
-        # todo vehicleType input, should we be restricting it???
         vehicleType = sqlFile.getNumber("Enter the type of the vehicle (1=car,2=suv,3=crossover,4=van,5=truck): ",1,0,5)#integer
 
         string = "insert into vehicle values('{:s}','{:s}','{:s}',{:d},'{:s}',{:d})"
@@ -133,7 +132,7 @@ def newVehicle(sql):
                                 print("Invalid input, please enter either the letter y or n")
 
 def autoTrans(sql):
-        Vehicle = input("Enter the serial_no of the vehicle in the auto transaction: ")#char(15)
+        Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
         Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
         Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
         Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
@@ -264,8 +263,8 @@ def search1(sql):
 def search2(sql):
 	print("\n")
 	print("Personal Violation Record\n")
-	assertion1 = []
-	assertion2 = []
+	assertion1 = ''
+	assertion2 = ''
 	licence_no = sqlFile.getString("Enter a licence number or press enter to input a sin: ",15)
 	string1 = "SELECT d.licence_no FROM drive_licence d WHERE d.licence_no = '{:s}'"
 	if len(licence_no) != 0:
@@ -277,7 +276,7 @@ def search2(sql):
 	else:
 		sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
 
-	string2 = "SELECT d.licence_no FROM drive_licence d WHERE d.licence_no = '{:s}'"
+	string2 = "SELECT d.sin FROM drive_licence d WHERE d.sin = '{:s}'"
 
 	if sin != None  and len(licence_no) == 0:
 		assertion2 = (sql.exeAndFetch(string2.format(sin)))
@@ -285,6 +284,7 @@ def search2(sql):
 		Results = (sql.exeAndFetch(string4.format(sin)))
 
 	if len(assertion1) == 0 and len(assertion2) == 0:
+		print("\n")
 		print("Person does not exist")
 		print("\n")
 		return
@@ -314,7 +314,7 @@ def search3(sql):
 	serial_no = sqlFile.getString("Enter a serial_no or press Enter to choose a new search type: ",15)
 	string = "SELECT v.serial_no FROM vehicle v WHERE v.serial_no = '{:s}'"
 	assertion = (sql.exeAndFetch(string.format(serial_no)))
-	if len(assertion == 0):
+	if len(assertion) == 0:
 		print("No vehicle found!")
 		return
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
