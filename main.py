@@ -184,13 +184,12 @@ def licenceReg(sql):
 	while True:
 		Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
 		if not unique(sql,"drive_licence d", "d.sin = '{:s}'".format(Person)):
-			print("\n")
 			print("Person already has a licence")
-			print("\n")
-			return
+			choice = sqlFile.getString("Try again? (y/n): ",15,0,"ynYN").lower()
+			if choice == 'n':
+				return
 
 		if unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
-			print("\n")
 			print("Person not found, adding person")
 			newPerson(sql,Person)
 			break
@@ -198,10 +197,7 @@ def licenceReg(sql):
 			break
 	Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
 	Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
-	# TODO: CHECK THAT EXPIRY DATE IS AFTER ISSUING DATE
 	Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
-	# File_name = getPic("Enter the path to the picture: ") #blob
-	# TODO: CHECK THAT PICTURE EXISTS
 	Picture = sqlFile.getPic("Enter the path to the picture: ")
 
 	# prepare memory for operation parameters  # i found I didn't need to do this!
@@ -217,8 +213,21 @@ def licenceReg(sql):
 def violationRec(sql):
 	#TODO: CHECKS NEED TO BE DONE
 	ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int (if neccesary)
-	violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
-	vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
+	while True:
+		violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
+		if unique(sql,"people p", "p.sin = '{:s}'".format(violator)):
+			print("Violator does not exist")
+			choice = sqlFile.getString("Try again? (y/n): ",15,0,"ynYN").lower()
+			if choice == 'n':
+				return
+	while True:
+		vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
+		if unique(sql,"people p", "p.sin = '{:s}'".format(vehicle)):
+			print("Vehicle does not exist")
+			choice = sqlFile.getString("Enter new serial_no? (y/n): ", 15,0,"ynYN").lower()
+			if choice == 'n':
+				return
+
 	office = sqlFile.getString("Enter the office number: ",15) #char(15)
 	typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
 
