@@ -144,8 +144,24 @@ def newVehicle(sql):
 	print("\n")
 
 def autoTrans(sql):
-	Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
-	Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+	Vehicle = None
+	while(True):
+		Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
+		if not (unique(sql, "vehicle", "serial_no = '{:s}'".format(Vehicle))):
+			break
+		else:
+			tryAgain = sqlFile.getString("Warning vehicle doen't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
+			if(tryAgain.lower() == "n"):
+				return None
+	Seller = None
+	while(True):
+		Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+		if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
+			break
+		else:
+			tryAgain = sqlFile.getString("Warning seller doesn't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
+			if(tryAgain.lower() == "n"):
+				return None
 	Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
 	Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
@@ -156,12 +172,28 @@ def autoTrans(sql):
 	sql.execute(string.format(Vehicle))
 
 	primaryExists = False
-	buyerNum = sqlFile.getNumber("Enter the number of buyers: ")
-	#TODO: CHECK FOR AT LEAST PRIMARY OWNER
-	for _ in range(buyerNum):
-		Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
-		primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN')
-		if primary.lower() == 'y': # TODO: NEEDS CHECKS FOR INSERTIONS
+	buyerNum = sqlFile.getNumber("Enter the number of buyers: ", minValue = 1)
+	for x in range(buyerNum):
+		Buyer = None
+		while(True):
+			Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
+			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
+				break
+			else:
+			tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
+				if(tryAgain.lower() == "y"):
+					newPerson(sql, Buyer)
+				else:
+					tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
+					if(tryAgain.lower() == "y"):
+						return None
+		primary = None
+		if (x == buyerNum - 1) and (not primaryExists):
+			print("Automatically setting this to be the primary owner.")
+			primary = 'y'
+		else:
+			primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
+		if primary.lower() == 'y':
 			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
 			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
 			 sql.execute(string)
@@ -173,8 +205,6 @@ def autoTrans(sql):
 			 string = "insert into owner values('{:s}','{:s}','{:s}')"
 			 string = string.format(Buyer, Vehicle, 'n')
 			 sql.execute(string)
-	print("Transaction Recorded!")
-	print("\n")
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
@@ -309,7 +339,6 @@ def search1(sql):
 
 
 def search2(sql):
-	print("\n")
 	print("Personal Violation Record\n")
 	assertion1 = ''
 	assertion2 = ''
@@ -321,6 +350,11 @@ def search2(sql):
 		string3 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
 		Results = (sql.exeAndFetch(string3.format(licence_no)))
 		sin = None
+		if len(assertion1) == 0:
+			print("\n")
+			print("Licence not found")
+			print("\n")
+			return
 	else:
 		sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
 
@@ -331,13 +365,12 @@ def search2(sql):
 		string4 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t WHERE t.violator_no = '{:s}'"
 		Results = (sql.exeAndFetch(string4.format(sin)))
 
-	if len(assertion1) == 0 and len(assertion2) == 0:
-		print("\n")
-		print("Person does not exist")
-		print("\n")
-		return
+		if len(assertion2) == 0:
+			print("\n")
+			print("Person does not exist")
+			print("\n")
+			return
 
-	print("\n")
 	if len(Results) == 0:
 		print("No tickets found")
 		print("\n")
@@ -353,7 +386,6 @@ def search2(sql):
 		print("Place: ", result[6])
 		print("Descriptions: ", result[7])
 		print("\n")
-	print("\n")
 	return
 
 def search3(sql):
@@ -389,7 +421,7 @@ def newPerson(sql, Sin=None):
 			Sin = sqlFile.getString("Enter the sin of the person:",15) #char(15)
 			isUnique = unique(sql, "People p", "p.sin = '{:s}'".format(Sin))
 			if not isUnique:
-				print("Person already exists!")				
+				print("Person already exists!")
 	Name = sqlFile.getString("Enter the name of the person: ",40) #varchar(40)
 	Height = sqlFile.getNumber("Enter the height of the person: ",5) #number(5,2)
 	Weight = sqlFile.getNumber("Enter the weight of the person: ",5) #number(5,2)
@@ -411,10 +443,5 @@ def unique(sql, table, conditionMessage):
 		return True
 	else:
 		return False
-
-
-
-
-
 
 main()  # run the main function
