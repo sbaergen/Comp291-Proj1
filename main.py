@@ -217,7 +217,7 @@ def licenceReg(sql):
 		Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
 		if not unique(sql,"drive_licence d", "d.sin = '{:s}'".format(Person)):
 			print("Person already has a licence")
-			choice = sqlFile.getString("Try again? (y/n): ",15,0,"ynYN").lower()
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
 				return
 
@@ -249,19 +249,41 @@ def violationRec(sql):
 		violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
 		if unique(sql,"people p", "p.sin = '{:s}'".format(violator)):
 			print("Violator does not exist")
-			choice = sqlFile.getString("Try again? (y/n): ",15,0,"ynYN").lower()
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
 				return
+		else:
+			break
+
 	while True:
 		vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
-		if unique(sql,"people p", "p.sin = '{:s}'".format(vehicle)):
+		if unique(sql,"vehicle v", "v.serial_no = '{:s}'".format(vehicle)):
 			print("Vehicle does not exist")
-			choice = sqlFile.getString("Enter new serial_no? (y/n): ", 15,0,"ynYN").lower()
+			choice = sqlFile.getString("Enter new serial_no? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
 				return
+		else:
+			break
 
-	office = sqlFile.getString("Enter the office number: ",15) #char(15)
-	typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+	while True:
+		officer = sqlFile.getString("Enter the officer number: ",15) #char(15)
+		if unique(sql,"people p", "p.sin = '{:s}'".format(office)):
+			print("Officer does not exist")
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
+		
+	while True:
+		typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+		if unique(sql,"ticket_type t","vtype = '{:s}'".format(typeTicket)):
+			print("Invalid ticket type")
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
 
 	date = sqlFile.getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
 	place = sqlFile.getString("Enter the location of the infraction: ",20) # varchar(20)
