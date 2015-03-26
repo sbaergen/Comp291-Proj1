@@ -150,7 +150,7 @@ def autoTrans(sql):
 		if not (unique(sql, "vehicle", "serial_no = '{:s}'".format(Vehicle))):
 			break
 		else:
-			tryAgain = input("Warning vehicle doen't exist! Try again? (y/n): ")
+			tryAgain = sqlFile.getString("Warning vehicle doen't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
 			if(tryAgain.lower() == "n"):
 				return None
 	Seller = None
@@ -159,7 +159,7 @@ def autoTrans(sql):
 		if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
 			break
 		else:
-			tryAgain = input("Warning seller doesn't exist! Try again? (y/n): ")
+			tryAgain = sqlFile.getString("Warning seller doesn't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
 			if(tryAgain.lower() == "n"):
 				return None
 	Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
@@ -180,11 +180,11 @@ def autoTrans(sql):
 			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
 				break
 			else:
-				tryAgain = input("Warning buyer doesn't exist! Create a new person? (y/n): ")
+			tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
 				if(tryAgain.lower() == "y"):
 					newPerson(sql, Buyer)
 				else:
-					tryAgain = input("Do you want to quit? (y/n): ")
+					tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
 					if(tryAgain.lower() == "y"):
 						return None
 		primary = None
@@ -205,8 +205,6 @@ def autoTrans(sql):
 			 string = "insert into owner values('{:s}','{:s}','{:s}')"
 			 string = string.format(Buyer, Vehicle, 'n')
 			 sql.execute(string)
-	print("Transaction Recorded!")
-	print("\n")
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
