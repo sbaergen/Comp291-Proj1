@@ -44,7 +44,7 @@ def getString(message, maxLen = None, minLen = 0, contains = None):
                         print("Input invalid!")
         return string
 
-def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
+def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = None):
         number = None
         while(True):
                 try:
@@ -63,6 +63,10 @@ def getNumber(message, maxLen = None, minLen = 0, maxValue = None):
                                 continue
                 if maxValue is not None:
                         if number > maxValue:
+                                print("Invalid input, try again.")
+                                continue
+                if minValue is not None:
+                        if number < minValue:
                                 print("Invalid input, try again.")
                                 continue
                 return number
