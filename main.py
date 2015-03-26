@@ -219,13 +219,12 @@ def licenceReg(sql):
 	while True:
 		Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
 		if not unique(sql,"drive_licence d", "d.sin = '{:s}'".format(Person)):
-			print("\n")
 			print("Person already has a licence")
-			print("\n")
-			return
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
 
 		if unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
-			print("\n")
 			print("Person not found, adding person")
 			newPerson(sql,Person)
 			break
@@ -233,10 +232,7 @@ def licenceReg(sql):
 			break
 	Class = sqlFile.getString("Enter the class of driving licence of the person: ",10) #varchar(10)
 	Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
-	# TODO: CHECK THAT EXPIRY DATE IS AFTER ISSUING DATE
 	Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
-	# File_name = getPic("Enter the path to the picture: ") #blob
-	# TODO: CHECK THAT PICTURE EXISTS
 	Picture = sqlFile.getPic("Enter the path to the picture: ")
 
 	# prepare memory for operation parameters  # i found I didn't need to do this!
@@ -252,10 +248,45 @@ def licenceReg(sql):
 def violationRec(sql):
 	#TODO: CHECKS NEED TO BE DONE
 	ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int (if neccesary)
-	violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
-	vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
-	office = sqlFile.getString("Enter the office number: ",15) #char(15)
-	typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+	while True:
+		violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
+		if unique(sql,"people p", "p.sin = '{:s}'".format(violator)):
+			print("Violator does not exist")
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
+
+	while True:
+		vehicle = sqlFile.getString("Enter the serial number of the vehicle: ",15) #char(15)
+		if unique(sql,"vehicle v", "v.serial_no = '{:s}'".format(vehicle)):
+			print("Vehicle does not exist")
+			choice = sqlFile.getString("Enter new serial_no? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
+
+	while True:
+		officer = sqlFile.getString("Enter the officer number: ",15) #char(15)
+		if unique(sql,"people p", "p.sin = '{:s}'".format(office)):
+			print("Officer does not exist")
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
+		
+	while True:
+		typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+		if unique(sql,"ticket_type t","vtype = '{:s}'".format(typeTicket)):
+			print("Invalid ticket type")
+			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+			if choice == 'n':
+				return
+		else:
+			break
 
 	date = sqlFile.getDate("Enter the date of the violation(YYYY-MM-DD): ") #date
 	place = sqlFile.getString("Enter the location of the infraction: ",20) # varchar(20)
@@ -425,6 +456,7 @@ def newPerson(sql, Sin=None):
 	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
 	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
 	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF') #char #contains (m or f)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF').lower() #char #contains (m or f)
 	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
