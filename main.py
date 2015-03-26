@@ -85,6 +85,7 @@ Please Select from the following:
 # You may assume all vehicle types have been loaded into the inital database.
 # Create a new vehicle and select owner, if no owner exists create a new person
 def newVehicle(sql):
+	serial_no = None
 	while True:
 		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15)
 		if unique(sql, "vehicle v", "v.serial_no = '{:s}'".format(serial_no)):
@@ -97,6 +98,7 @@ def newVehicle(sql):
 	model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
 	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
 	color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
+	vehicleType = None
 	while True:
 		vehicleType = sqlFile.getNumber("Enter the integer type of the vehicle: ")#integer
 		if unique(sql, "vehicle_type v", "v.type_id = {:d}".format(vehicleType)):
