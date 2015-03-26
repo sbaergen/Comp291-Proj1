@@ -180,7 +180,7 @@ def autoTrans(sql):
 			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
 				break
 			else:
-			tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
+				tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
 				if(tryAgain.lower() == "y"):
 					newPerson(sql, Buyer)
 				else:
