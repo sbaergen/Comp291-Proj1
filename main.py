@@ -419,7 +419,7 @@ def newPerson(sql, Sin=None):
 	Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
 	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
 	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
-	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mf') #char #contains (m or f)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF').lower() #char #contains (m or f)
 	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
