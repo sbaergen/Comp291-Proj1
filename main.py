@@ -119,7 +119,7 @@ def newVehicle(sql):
 		sql.execute(string)
 
 		while True:
-			addMore = getString("Add another owner? (y/n): ",1,1,"ynYN").lower()
+			addMore = sqlFile.getString("Add another owner? (y/n): ",1,1,"ynYN").lower()
 			if addMore == 'y':
 				addOwner = True
 				break
@@ -147,7 +147,7 @@ def autoTrans(sql):
 				return None
 	Seller = None
 	while(True):
-		Seller = sqlFile.getString("Enter the sin of the seller: ",15) #char(15)
+		Seller = sqlFile.getString("Enter the sin of the seller: ",15, 1) #char(15)
 		if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
 			break
 		else:
@@ -168,7 +168,7 @@ def autoTrans(sql):
 	for x in range(buyerNum):
 		Buyer = None
 		while(True):
-			Buyer = sqlFile.getString("Enter the sin of the buyer: ",15)
+			Buyer = sqlFile.getString("Enter the sin of the buyer: ",15,1)
 			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
 				break
 			else:
@@ -209,7 +209,7 @@ def licenceReg(sql):
 	# TODO: CHECK THAT PERSON EXISTS
 	Person = None
 	while True:
-		Person = sqlFile.getString("Enter the sin of the person: ",15) #char(15)
+		Person = sqlFile.getString("Enter the sin of the person: ",15,1) #char(15)
 		if not unique(sql,"drive_licence d", "d.sin = '{:s}'".format(Person)):
 			print("Person already has a licence")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
