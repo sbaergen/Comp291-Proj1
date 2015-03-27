@@ -220,6 +220,11 @@ def licenceReg(sql):
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
 				return
+		elif unique(sql, "people", "sin = '{:s}'".format(Person)):
+			newPerson(sql, Person)
+			break
+		else:
+			break
 
 		if unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
 			print("Person not found, adding person")
@@ -240,6 +245,7 @@ def licenceReg(sql):
 
 	print("Licence Registered!")
 	print("\n")
+
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
@@ -274,7 +280,7 @@ def violationRec(sql):
 				return
 		else:
 			break
-		
+
 	while True:
 		typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
 		if unique(sql,"ticket_type t","vtype = '{:s}'".format(typeTicket)):
