@@ -3,6 +3,7 @@ import getpass
 import sql as sqlFile
 
 # This will display the menu and handle input to the menu
+# after creating/population tables.
 def main():
         print("Please login before proceeding.")
         sql = None
@@ -81,7 +82,8 @@ Please Select from the following:
 
 # Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner.
 # You may assume all vehicle types have been loaded into the inital database.
-# Create a new vehicle and select owner, if no owner exists create a new person
+# Create a new vehicle and select owner, if no owner exists create a new person.
+# It will ensure all input is valid and all essential input is not null.
 def newVehicle(sql):
         serial_no = None
         while True:
@@ -115,10 +117,10 @@ def newVehicle(sql):
                                 primaryDone = True
                 else:
                         Primary_Ownership = 'n'
-                #contains (y or n)
+
                 Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15, 1) #char(15)
-                #UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
-                if unique(sql, "people p", "p.sin = {:s}".format(Owner)):
+
+                if unique(sql, "people p", "p.sin = '{:s}'".format(Owner)):
                         newPerson(sql, Owner)
 
                 string = "insert into owner values ('{:s}','{:s}','{:s}')"
@@ -142,6 +144,10 @@ def newVehicle(sql):
         print("New Vehicle Registered!")
         print("\n")
 
+# autoTrans will insert a auto transaction into the database. Before this, the function ensures
+# that all necessary foreign-keys are present in the data. For example, if a seller is inputed
+# that does not own the inputted vehicle, an error is displayed. Furthermore, if a buyer is inputed
+# that is not in the database, the buyer is added if desired
 def autoTrans(sql):
         Vehicle = None
         while(True):
@@ -211,10 +217,13 @@ def autoTrans(sql):
         print("Auto Transaction Completed!")
         print("\n")
 
+
+# licenceReg creates a new licence in the database if the person inputted does
+# not already have a licence. It ensures all necessary input is not Null and
+# dependencies hold.
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
-        Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15) (if nessesary)
-        # TODO: CHECK THAT PERSON EXISTS
+        Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15)
         Person = None
         while True:
                 Person = sqlFile.getString("Enter the sin of the person: ",15,1) #char(15)
@@ -223,13 +232,7 @@ def licenceReg(sql):
                         choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
                         if choice == 'n':
                                 return None
-                elif unique(sql, "people", "sin = '{:s}'".format(Person)):
-                        newPerson(sql, Person)
-                        break
-                else:
-                        break
-
-                if unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
+                elif unique(sql, "people p", "p.sin = '{:s}'".format(Person)):
                         print("Person not found, adding person")
                         newPerson(sql,Person)
                         break
@@ -240,9 +243,6 @@ def licenceReg(sql):
         Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
         Picture = sqlFile.getPic("Enter the path to the picture: ")
 
-        # prepare memory for operation parameters  # i found I didn't need to do this!
-        # cursor.setinputsizes(image=cx_Oracle.BLOB)
-
         string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
         sql.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
 
@@ -252,8 +252,7 @@ def licenceReg(sql):
 #This component is used by the police officer to issue a traffic ticket and record the violation
 #You may also assume that all the information about ticket type is pre-loaded into the system
 def violationRec(sql):
-        #TODO: CHECKS NEED TO BE DONE
-        ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int (if neccesary)
+        ticket_no = sql.exeAndFetch("Select Max(t.ticket_no) From ticket t")[0][0]  + 1 #int
         while True:
                 violator = sqlFile.getString("Enter the sin of the violator: ",15) #char(15)
                 if unique(sql,"people p", "p.sin = '{:s}'".format(violator)):
@@ -285,7 +284,7 @@ def violationRec(sql):
                         break
 
         while True:
-                typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10 #check in other type
+                typeTicket = sqlFile.getString("Enter the type of ticket: ",10) #char 10
                 if unique(sql,"ticket_type t","vtype = '{:s}'".format(typeTicket)):
                         print("Invalid ticket type")
                         choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
@@ -306,6 +305,7 @@ def violationRec(sql):
         print("Violation Recorded!")
         print("\n")
 
+#This component is used to allow the user to select a search type
 def searchEngine(sql):
     print("1.Personal Information Search")
     print("2.Personal Violation Record")
@@ -385,6 +385,9 @@ def search2(sql):
         if len(licence_no) != 0:
                 assertion1 = (sql.exeAndFetch(string1.format(licence_no)))
           #ticket given the sin of the person or their drivers licence number
+
+          #This also checks to make sure that the sin or licence number are valid and
+          #do exist in the given data, running an appropriate error otherwise
                 string3 = "SELECT t.ticket_no, t.violator_no, t.vehicle_id, t.office_no, t.vtype, t.vdate, t.place, t.descriptions FROM ticket t, drive_licence d WHERE d.licence_no = '{:s}' and d.sin = t.violator_no"
                 Results = (sql.exeAndFetch(string3.format(licence_no)))
                 sin = None
@@ -409,6 +412,7 @@ def search2(sql):
                         print("\n")
                         return None
 
+        #Displays a separate result if the person is found but they have no tickets registered
         if len(Results) == 0:
                 print("No tickets found")
                 print("\n")
@@ -454,8 +458,11 @@ def search3(sql):
         print("\n")
         return None
 
+#Allows the input and addition of a complete person into the database
+#Nessesary to remove the bulk from the program and save time and space
 def newPerson(sql, Sin=None):
         if Sin is None:
+                #Asserts that the new person to be added does not already exist
                 isUnique = False
                 while not isUnique:
                         Sin = sqlFile.getString("Enter the sin of the person:",15) #char(15)
@@ -463,19 +470,21 @@ def newPerson(sql, Sin=None):
                         if not isUnique:
                                 print("Person already exists!")
         Name = sqlFile.getString("Enter the name of the person: ",40) #varchar(40)
-        Height = sqlFile.getNumber("Enter the height of the person: ",5) #number(5,2)
-        Weight = sqlFile.getNumber("Enter the weight of the person: ",5) #number(5,2)
+        Height = sqlFile.getNumber("Enter the height of the person: ",None,0,999.99) #number(5,2)
+        Weight = sqlFile.getNumber("Enter the weight of the person: ",None,0,1000) #number(5,2)
         Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
         Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
         Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
-        Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,1,'mfMF').lower() #char #contains (m or f)
+        Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,1,'mfMF').lower() #char
         Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
-        string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
+        string = "Insert into people values ('{:s}','{:s}',{:.2f},{:.2f},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
         sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
         print("Person Added!")
         print("\n")
 
+#Creates a sql with gereal string slicing and formatting to remove a large amount
+#of bulk from the program and increase readability.
 def unique(sql, table, conditionMessage):
         string = "SELECT * FROM {:s} WHERE {:s}"
         result = sql.exeAndFetch(string.format(table, conditionMessage))
