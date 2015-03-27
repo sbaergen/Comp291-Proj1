@@ -45,14 +45,9 @@ Please Select from the following:
 		6:Exit""")
 		choice = None
 		while(True):
-			try:
-				choice = eval(input("Choice (1-6): "))
-				if (not (choice >= 1 and choice <=6)):
-					print ("Invalid Input!", end = " ")
-				else:
-					break
-			except:
-				print ("Invalid Input!", end = " ")
+
+		choice = getNumber("Choice (1-6): ",6,1)
+
 		if choice == 1:
 			print("New Vehicle Registration:")
 			newVehicle(sql)
@@ -96,7 +91,7 @@ def newVehicle(sql):
 			return
 	maker = sqlFile.getString("Enter the make of the vehicle: ",20) #varchar (20)
 	model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
-	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
+	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,4) #number (4,0)
 	color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
 	vehicleType = None
 	while True:
@@ -111,7 +106,7 @@ def newVehicle(sql):
 	addOwner = True
 	while addOwner:
 		if not primaryDone:
-			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,1,'ynYN')#char(1)
+			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,1,'ynYN').lower()#char(1)
 			if Primary_Ownership.lower() == 'y':
 				primaryDone = True
 		else:
@@ -127,11 +122,11 @@ def newVehicle(sql):
 		sql.execute(string)
 
 		while True:
-			addMore = input("Add another owner? (y/n): ")
-			if addMore.lower() == 'y':
+			addMore = getString("Add another owner? (y/n): ",1,1,"ynYN").lower()
+			if addMore == 'y':
 				addOwner = True
 				break
-			elif addMore.lower() =='n':
+			else:
 				if primaryDone == True:
 					addOwner = False
 					break
@@ -139,8 +134,6 @@ def newVehicle(sql):
 					print("Error: Need to enter a primary owner!")
 					addOwner = True
 					break
-			else:
-				print("Invalid input, please enter either the letter y or n")
 
 	print("New Vehicle Registered!")
 	print("\n")
