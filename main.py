@@ -65,12 +65,9 @@ Please Select from the following:
 			print("Good Bye.")
 			break
 		else:
-			continue
-			print ("Invalid Input!", end = " ")
-			print (choice)
+			print ("Invalid Input!")
 
 	sql.close()  # clean up sql object
-
 
 
 # Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner.
@@ -84,8 +81,7 @@ def newVehicle(sql):
 			break
 		else:
 			print("Error: Vehicle already exists!")
-			print("\n")
-			return
+			return None
 	maker = sqlFile.getString("Enter the make of the vehicle: ",20) #varchar (20)
 	model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
 	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,4) #number (4,0)
@@ -202,6 +198,7 @@ def autoTrans(sql):
 			 sql.execute(string)
 
 	print("Auto Transaction Completed!")
+	print("\n")
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
@@ -214,7 +211,7 @@ def licenceReg(sql):
 			print("Person already has a licence")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
-				return
+				return None
 		elif unique(sql, "people", "sin = '{:s}'".format(Person)):
 			newPerson(sql, Person)
 			break
@@ -252,7 +249,7 @@ def violationRec(sql):
 			print("Violator does not exist")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
-				return
+				return None
 		else:
 			break
 
@@ -262,7 +259,7 @@ def violationRec(sql):
 			print("Vehicle does not exist")
 			choice = sqlFile.getString("Enter new serial_no? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
-				return
+				return None
 		else:
 			break
 
@@ -272,7 +269,7 @@ def violationRec(sql):
 			print("Officer does not exist")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
-				return
+				return None
 		else:
 			break
 
@@ -282,7 +279,7 @@ def violationRec(sql):
 			print("Invalid ticket type")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
-				return
+				return None
 		else:
 			break
 
@@ -346,8 +343,7 @@ def search1(sql):
 	print("\n")
 	if len(Results) == 0:
 		print("No person found")
-		print("\n")
-		return
+		return None
 
 	for result in Results:
 		print("Name: ", result [0])
@@ -360,7 +356,7 @@ def search1(sql):
 		print("\n")
 	print("\n")
 
-	return
+	return None
 
 
 def search2(sql):
@@ -379,7 +375,7 @@ def search2(sql):
 			print("\n")
 			print("Licence not found")
 			print("\n")
-			return
+			return None
 	else:
 		sin = sqlFile.getString("Enter a sin or press enter to choose a new search: ",15)
 
@@ -394,12 +390,12 @@ def search2(sql):
 			print("\n")
 			print("Person does not exist")
 			print("\n")
-			return
+			return None
 
 	if len(Results) == 0:
 		print("No tickets found")
 		print("\n")
-		return
+		return None
 
 	for result in Results:
 		print("Ticket Number: ", result[0])
@@ -411,7 +407,7 @@ def search2(sql):
 		print("Place: ", result[6])
 		print("Descriptions: ", result[7])
 		print("\n")
-	return
+	return None
 
 def search3(sql):
 	print("\n")
@@ -421,7 +417,7 @@ def search3(sql):
 	assertion = (sql.exeAndFetch(string.format(serial_no)))
 	if len(assertion) == 0:
 		print("No vehicle found!")
-		return
+		return None
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
 	string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
@@ -437,7 +433,7 @@ def search3(sql):
 			print("Average Sale Price: ", result1[1])
 			print("Amount of Infractions: ", result2[0])
 	print("\n")
-	return
+	return None
 
 def newPerson(sql, Sin=None):
 	if Sin is None:
@@ -458,8 +454,8 @@ def newPerson(sql, Sin=None):
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 	sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
-	print('\n')
 	print("Person Added!")
+	print("\n")
 
 def unique(sql, table, conditionMessage):
 	string = "SELECT * FROM {:s} WHERE {:s}"
