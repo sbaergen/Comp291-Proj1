@@ -1,76 +1,82 @@
+import sys
 import getpass
 import sql as sqlFile
 
 # This will display the menu and handle input to the menu
 # after creating/population tables.
 def main():
-        print("Please login before proceeding.")
-        sql = None
-        while(True):
-                try:
-                        user = input("User [%s]:" % getpass.getuser())
-                        if not user:
-                                user = getpass.getuser()
-                        passw = getpass.getpass("Pass:")
+	print("Please login before proceeding.")
+	sql = None
+	while(True):
+		try:
+			user = input("User [%s]:" % getpass.getuser())
+			if not user:
+				user = getpass.getuser()
+			passw = getpass.getpass("Pass:")
 
-                        # create a new instance of a connection object
-                        sql = sqlFile.SqlConnection(user, passw)
+			# create a new instance of a connection object
+			sql = sqlFile.SqlConnection(user, passw)
 
-                        break
-                except:
-                        print("Oops, try again!")
-                        continue
+			break
+		except:
+			print("Oops, try again!")
+			continue
 
-        # TODO:We should ask for a file w/ create table statements
+	# Waring if no arguments are used
+	if(len(sys.argv) <= 2):
+		print("Waring: Not all arguents are being used!")
+		print("First argument creates tables.")
+		print("Second argument populates the data with insert statements.")
 
-        # TODO:Drop & Create Tables
-        print("Dropping / Creating Tables")
-        sql.executeFromFile("p1_setup.sql.txt")
+	# Drop & Create Tables
+	if(len(sys.argv) >= 2):
+		print("Dropping / Creating Tables")
+		print("Using the argument " + str(sys.argv[1]))
+		sql.executeFromFile(str(sys.argv[1]))
 
-        # TODO:We should ask for a file w/ insert statements
+	# Populate tables
+	if(len(sys.argv) >= 3):
+		print("Populate Tables")
+		print("Using the argument " + str(sys.argv[2]))
+		sql.executeFromFile(str(sys.argv[2]))
 
-        # TODO:Populate tables
-        print("Populate Tables")
-        sql.executeFromFile("population.txt")
-
-# Print the menu until 6 is inputed(for quit)
-
-        print ("Welcome to the Alberta Auto Registration System!")
-        while(True):
-                print (
+	print("")  # put some space between info above and start of menu
+	print ("Welcome to the Alberta Auto Registration System!")
+	while(True):
+		print (
 """----------------------------------------
 Please Select from the following:
-                1:New Vehicle Registration
-                2:Auto Transaction
-                3:Driver Licence Registration
-                4:Violation Record
-                5:Search Engine
-                6:Exit""")
+		1:New Vehicle Registration
+		2:Auto Transaction
+		3:Driver Licence Registration
+		4:Violation Record
+		5:Search Engine
+		6:Exit""")
 
-                choice = sqlFile.getNumber("Choice (1-6): ",1,1, 6, 1)
+		choice = sqlFile.getNumber("Choice (1-6): ",1,1, 6, 1)
 
-                if choice == 1:
-                        print("New Vehicle Registration:")
-                        newVehicle(sql)
-                elif choice == 2:
-                        print("Auto Transaction:")
-                        autoTrans(sql)
-                elif choice == 3:
-                        print("Licence Registration:")
-                        licenceReg(sql)
-                elif choice == 4:
-                        print("Violation Record:")
-                        violationRec(sql)
-                elif choice == 5:
-                        print("Search Engine:")
-                        searchEngine(sql)
-                elif choice == 6:
-                        print("Good Bye.")
-                        break
-                else:
-                        print ("Invalid Input!")
+		if choice == 1:
+			print("New Vehicle Registration:")
+			newVehicle(sql)
+		elif choice == 2:
+			print("Auto Transaction:")
+			autoTrans(sql)
+		elif choice == 3:
+			print("Licence Registration:")
+			licenceReg(sql)
+		elif choice == 4:
+			print("Violation Record:")
+			violationRec(sql)
+		elif choice == 5:
+			print("Search Engine:")
+			searchEngine(sql)
+		elif choice == 6:
+			print("Good Bye.")
+			break
+		else:
+			print ("Invalid Input!")
 
-        sql.close()  # clean up sql object
+	sql.close()  # clean up sql object
 
 
 # Register new vehicle by officer. All detailed information about the vehicle and personal information about the owner.
@@ -143,73 +149,73 @@ def newVehicle(sql):
 # that does not own the inputted vehicle, an error is displayed. Furthermore, if a buyer is inputed
 # that is not in the database, the buyer is added if desired
 def autoTrans(sql):
-        Vehicle = None
-        while(True):
-                Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
-                if not (unique(sql, "vehicle", "serial_no = '{:s}'".format(Vehicle))):
-                        break
-                else:
-                        tryAgain = sqlFile.getString("Warning vehicle doen't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
-                        if(tryAgain.lower() == "n"):
-                                return None
-        Seller = None
-        while(True):
-                Seller = sqlFile.getString("Enter the sin of the seller: ",15, 1) #char(15)
-                if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
-                        break
-                else:
-                        tryAgain = sqlFile.getString("Warning seller doesn't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
-                        if(tryAgain.lower() == "n"):
-                                return None
-        Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
-        Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
+	Vehicle = None
+	while(True):
+		Vehicle = sqlFile.getString("Enter the serial_no of the vehicle in the auto transaction: ",15)#char(15)
+		if not (unique(sql, "vehicle", "serial_no = '{:s}'".format(Vehicle))):
+			break
+		else:
+			tryAgain = sqlFile.getString("Warning vehicle doen't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
+			if(tryAgain.lower() == "n"):
+				return None
+	Seller = None
+	while(True):
+		Seller = sqlFile.getString("Enter the sin of the seller: ",15, 1) #char(15)
+		if not (unique(sql, "owner", "owner_id = '{:s}' and vehicle_id = '{:s}'".format(Seller, Vehicle))):
+			break
+		else:
+			tryAgain = sqlFile.getString("Warning seller doesn't exist! Try again? (y/n): ", 1, 1, "ynYN").lower()
+			if(tryAgain.lower() == "n"):
+				return None
+	Date = sqlFile.getDate("Enter the date of the transaction 'YYYY-MM-DD': ") #date
+	Price = sqlFile.getNumber("Enter the price the vehicle was sold for ($): ",9,0) #numeric(9,2)
 
-        string = "SELECT MAX(transaction_id) FROM auto_sale s"
-        TransactionId = sql.exeAndFetch(string)[0][0] + 1  # (int if nessesary)
+	string = "SELECT MAX(transaction_id) FROM auto_sale s"
+	TransactionId = sql.exeAndFetch(string)[0][0] + 1  # (int if nessesary)
 
-        string = "delete from owner where (vehicle_id = '{:s}')"
-        sql.execute(string.format(Vehicle))
+	string = "delete from owner where (vehicle_id = '{:s}')"
+	sql.execute(string.format(Vehicle))
 
-        primaryExists = False
-        buyerNum = sqlFile.getNumber("Enter the number of buyers: ", minValue = 1)
-        for x in range(buyerNum):
-                Buyer = None
-                while(True):
-                        Buyer = sqlFile.getString("Enter the sin of the buyer: ",15,1)
-                        if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
-                                break
-                        else:
-                                tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
-                                if(tryAgain.lower() == "y"):
-                                        newPerson(sql, Buyer)
-                                        break
-                                else:
-                                        tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
-                                        if(tryAgain.lower() == "y"):
-                                                return None
-                primary = None
-                if (x == buyerNum - 1) and (not primaryExists):
-                        print("Automatically setting this to be the primary owner.")
-                        primary = 'y'
-                elif not primaryExists:
-                        primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
-                else:
-                        primary = 'n'
-                if primary.lower() == 'y':
-                         string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
-                         string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
-                         sql.execute(string)
-                         primaryExists = True
-                         string = "insert into owner values('{:s}','{:s}','{:s}')"
-                         string = string.format(Buyer, Vehicle, 'y')
-                         sql.execute(string)
-                elif primary.lower() == 'n':
-                         string = "insert into owner values('{:s}','{:s}','{:s}')"
-                         string = string.format(Buyer, Vehicle, 'n')
-                         sql.execute(string)
+	primaryExists = False
+	buyerNum = sqlFile.getNumber("Enter the number of buyers: ", minValue = 1)
+	for x in range(buyerNum):
+		Buyer = None
+		while(True):
+			Buyer = sqlFile.getString("Enter the sin of the buyer: ",15,1)
+			if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
+				break
+			else:
+				tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
+				if(tryAgain.lower() == "y"):
+					newPerson(sql, Buyer)
+					break
+				else:
+					tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
+					if(tryAgain.lower() == "y"):
+						return None
+		primary = None
+		if (x == buyerNum - 1) and (not primaryExists):
+			print("Automatically setting this to be the primary owner.")
+			primary = 'y'
+		elif not primaryExists:
+			primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
+		else:
+			primary = 'n'
+		if primary.lower() == 'y':
+			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
+			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
+			 sql.execute(string)
+			 primaryExists = True
+			 string = "insert into owner values('{:s}','{:s}','{:s}')"
+			 string = string.format(Buyer, Vehicle, 'y')
+			 sql.execute(string)
+		elif primary.lower() == 'n':
+			 string = "insert into owner values('{:s}','{:s}','{:s}')"
+			 string = string.format(Buyer, Vehicle, 'n')
+			 sql.execute(string)
 
-        print("Auto Transaction Completed!")
-        print("\n")
+	print("Auto Transaction Completed!")
+	print("\n")
 
 
 # licenceReg creates a new licence in the database if the person inputted does
@@ -236,9 +242,6 @@ def licenceReg(sql):
         Issuing_date = sqlFile.getDate("Enter the date of issue 'YYYY-MM-DD': ") #date
         Expiry_date = sqlFile.getDate("Enter the date of expiry 'YYYY-MM-DD': ") #date
         Picture = sqlFile.getPic("Enter the path to the picture: ")
-
-        # prepare memory for operation parameters  # i found I didn't need to do this!
-        # cursor.setinputsizes(image=cx_Oracle.BLOB)
 
         string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
         sql.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
@@ -312,65 +315,65 @@ def searchEngine(sql):
     invalid = False
 
     while (choice.lower() != 'q'):
-            if invalid == False:
-                    choice = input("Choose a search type or press 'q' to quit: ")
-            else:
-                    invalid = False
+	    if invalid == False:
+		    choice = input("Choose a search type or press 'q' to quit: ")
+	    else:
+		    invalid = False
 
-            if choice == '1':
-                    search1(sql)
-            elif choice == '2':
-                    search2(sql)
-            elif choice == '3':
-                    search3(sql)
-            else:
-                    if choice.lower() != 'q':
-                            print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
-                            choice = input("Choose a valid search type or press 'q' to quit: ")
-                            invalid = True
+	    if choice == '1':
+		    search1(sql)
+	    elif choice == '2':
+		    search2(sql)
+	    elif choice == '3':
+		    search3(sql)
+	    else:
+		    if choice.lower() != 'q':
+			    print("Invalid input, please enter an integer 1, 2 or 3 or press 'q' to quit")
+			    choice = input("Choose a valid search type or press 'q' to quit: ")
+			    invalid = True
 
 def search1(sql):
-        print("\n")
-        print("Personal information search\n")
-        licence_no = sqlFile.getString("Enter a licence_no or press enter to input a name: ",15)
+	print("\n")
+	print("Personal information search\n")
+	licence_no = sqlFile.getString("Enter a licence_no or press enter to input a name: ",15)
 
-         #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
-         #licence expiry date of a person given their name or licence_no
-         #Allow for duplicate names
-         #Not sure whether to present r_id or the actual description of the condition
-        if len(licence_no) != 0:
-                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-                Results = (sql.exeAndFetch(string.format(licence_no)))
-                name = None
-                if len(Results) == 0:
-                        print("\n")
-                        print("Licence not found")
-                        print("\n")
-                        return None
-        else:
-                name = sqlFile.getString("Enter a name or press enter to choose a new search: ",40)
-        if name != None and len(licence_no) == 0:
-                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
-                Results = (sql.exeAndFetch(string.format(name)))
+	 #These queries list the Name, licence_no, address, birthday, drivers class restriction_id and
+	 #licence expiry date of a person given their name or licence_no
+	 #Allow for duplicate names
+	 #Not sure whether to present r_id or the actual description of the condition
+	if len(licence_no) != 0:
+		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+		Results = (sql.exeAndFetch(string.format(licence_no)))
+		name = None
+		if len(Results) == 0:
+			print("\n")
+			print("Licence not found")
+			print("\n")
+			return None
+	else:
+		name = sqlFile.getString("Enter a name or press enter to choose a new search: ",40)
+	if name != None and len(licence_no) == 0:
+		string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE p.name = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+		Results = (sql.exeAndFetch(string.format(name)))
 
-        print("\n")
-        if len(Results) == 0:
-                print("No person found")
-                print("\n")
-                return None
+	print("\n")
+	if len(Results) == 0:
+		print("No person found")
+		print("\n")
+		return None
 
-        for result in Results:
-                print("Name: ", result [0])
-                print("Licence_no: ", result[1])
-                print("Address: ", result[2])
-                print("Birthday: ", result[3])
-                print("Driving Class: ", result[4])
-                print("Driving Condition: ", result[5])
-                print("Expiring Date: ", result[6])
-                print("\n")
-        print("\n")
+	for result in Results:
+		print("Name: ", result [0])
+		print("Licence_no: ", result[1])
+		print("Address: ", result[2])
+		print("Birthday: ", result[3])
+		print("Driving Class: ", result[4])
+		print("Driving Condition: ", result[5])
+		print("Expiring Date: ", result[6])
+		print("\n")
+	print("\n")
 
-        return None
+	return None
 
 
 def search2(sql):
@@ -426,16 +429,16 @@ def search2(sql):
         return None
 
 def search3(sql):
-        print("\n")
-        print("Vehicle History\n")
-        serial_no = sqlFile.getString("Enter a serial_no or press Enter to choose a new search type: ",15)
-        string = "SELECT v.serial_no FROM vehicle v WHERE v.serial_no = '{:s}'"
-        assertion = (sql.exeAndFetch(string.format(serial_no)))
-        if len(assertion) == 0:
-                print("\n")
-                print("No vehicle found!")
-                print("\n")
-                return None
+	print("\n")
+	print("Vehicle History\n")
+	serial_no = sqlFile.getString("Enter a serial_no or press Enter to choose a new search type: ",15)
+	string = "SELECT v.serial_no FROM vehicle v WHERE v.serial_no = '{:s}'"
+	assertion = (sql.exeAndFetch(string.format(serial_no)))
+	if len(assertion) == 0:
+		print("\n")
+		print("No vehicle found!")
+		print("\n")
+		return None
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
         string = "SELECT COUNT(a.vehicle_id), AVG(a.price) FROM auto_sale a WHERE a.vehicle_id = '{:s}'"
@@ -444,14 +447,14 @@ def search3(sql):
         string = "SELECT COUNT(t.vehicle_id) FROM ticket t WHERE  t.vehicle_id = '{:s}'"
         Results2 = (sql.exeAndFetch(string.format(serial_no)))
 
-        print("\n")
-        for result1 in Results1:
-                for result2 in Results2:
-                        print("Amount of Sales: ", result1[0])
-                        print("Average Sale Price: ", result1[1])
-                        print("Amount of Infractions: ", result2[0])
-        print("\n")
-        return None
+	print("\n")
+	for result1 in Results1:
+		for result2 in Results2:
+			print("Amount of Sales: ", result1[0])
+			print("Average Sale Price: ", result1[1])
+			print("Amount of Infractions: ", result2[0])
+	print("\n")
+	return None
 
 #Allows the input and addition of a complete person into the database
 #Nessesary to remove the bulk from the program and save time and space
@@ -477,14 +480,15 @@ def newPerson(sql, Sin=None):
         sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
         print("Person Added!")
         print("\n")
+
 #Creates a sql with gereal string slicing and formatting to remove a large amount
 #of bulk from the program and increase readability. 
 def unique(sql, table, conditionMessage):
-        string = "SELECT * FROM {:s} WHERE {:s}"
-        result = sql.exeAndFetch(string.format(table, conditionMessage))
-        if not len(result):
-                return True
-        else:
-                return False
+	string = "SELECT * FROM {:s} WHERE {:s}"
+	result = sql.exeAndFetch(string.format(table, conditionMessage))
+	if not len(result):
+		return True
+	else:
+		return False
 
 main()  # run the main function
