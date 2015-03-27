@@ -123,6 +123,7 @@ def newVehicle(sql):
                 if unique(sql, "people p", "p.sin = '{:s}'".format(Owner)):
                         newPerson(sql, Owner)
                 
+        
                 if not unique(sql, "owner o", "o.owner_id = '{:s}' and o.vehicle_id = '{:s}'".format(Owner, serial_no)):
                         print("Already owns vehicle")
                         choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
@@ -130,7 +131,6 @@ def newVehicle(sql):
                                 return None
                         else:
                                 continue
-        
                 string = "insert into owner values ('{:s}','{:s}','{:s}')"
                 string = string.format(Owner, serial_no, Primary_Ownership)
                 sql.execute(string)
@@ -190,7 +190,17 @@ def autoTrans(sql):
                 while(True):
                         Buyer = sqlFile.getString("Enter the sin of the buyer: ",15,1)
                         if not (unique(sql, "people", "sin = '{:s}'".format(Buyer))):
-                                break
+                                if not unique(sql, "owner o", "o.owner_id = '{:s}' and o.vehicle_id = '{:s}'".format(Buyer, Vehicle)):
+                                        print("Already owns vehicle")
+                                        choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+                                        if choice == 'y':
+                                                continue
+                                        else:
+                                                tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
+                                                if(tryAgain.lower() == "y"):
+                                                        return None
+                                else:
+                                        break
                         else:
                                 tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
                                 if(tryAgain.lower() == "y"):
@@ -200,6 +210,8 @@ def autoTrans(sql):
                                         tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
                                         if(tryAgain.lower() == "y"):
                                                 return None
+                                        else:
+                                                continue
                 primary = None
                 if (x == buyerNum - 1) and (not primaryExists):
                         print("Automatically setting this to be the primary owner.")
