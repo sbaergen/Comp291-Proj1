@@ -43,10 +43,8 @@ Please Select from the following:
 		4:Violation Record
 		5:Search Engine
 		6:Exit""")
-		choice = None
-		while(True):
 
-		choice = getNumber("Choice (1-6): ",6,1)
+		choice = sqlFile.getNumber("Choice (1-6): ",1,1, 6, 1)
 
 		if choice == 1:
 			print("New Vehicle Registration:")
@@ -70,7 +68,6 @@ Please Select from the following:
 			continue
 			print ("Invalid Input!", end = " ")
 			print (choice)
-
 
 	sql.close()  # clean up sql object
 
