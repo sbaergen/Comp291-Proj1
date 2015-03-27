@@ -33,15 +33,16 @@ def getString(message, maxLen = None, minLen = 0, contains = None):
                 if minLen is not None:
                         if len(string) < minLen:
                                 valid = False
+				print("String too short, try again")
                 if maxLen is not None:
                         if len(string) > maxLen:
                                 valid = False
+				print("String too long, try again")
                 if contains is not None:
                         for char in string:
                                 if char not in contains:
                                         valid = False
-                if not valid:
-                        print("Input invalid!")
+					print("Invalid characters entered, try again")
         return string
 
 def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = None):
@@ -55,19 +56,19 @@ def getNumber(message, maxLen = None, minLen = 0, maxValue = None, minValue = No
                 length = len(str(number))
                 if maxLen is not None:
                         if length > maxLen:
-                                print("Invalid input, try again.")
+                                print("Number length too long, try again.")
                                 continue
                 if minLen is not None:
                         if length < minLen:
-                                print("Invalid input, try again.")
+                                print("Number length too short, try again.")
                                 continue
                 if maxValue is not None:
                         if number > maxValue:
-                                print("Invalid input, try again.")
+                                print("Value too large, try again.")
                                 continue
                 if minValue is not None:
                         if number < minValue:
-                                print("Invalid input, try again.")
+                                print("Value too small, try again.")
                                 continue
                 return number
 
