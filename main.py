@@ -45,14 +45,9 @@ Please Select from the following:
 		6:Exit""")
 		choice = None
 		while(True):
-			try:
-				choice = eval(input("Choice (1-6): "))
-				if (not (choice >= 1 and choice <=6)):
-					print ("Invalid Input!", end = " ")
-				else:
-					break
-			except:
-				print ("Invalid Input!", end = " ")
+
+		choice = getNumber("Choice (1-6): ",6,1)
+
 		if choice == 1:
 			print("New Vehicle Registration:")
 			newVehicle(sql)
@@ -96,7 +91,7 @@ def newVehicle(sql):
 			return
 	maker = sqlFile.getString("Enter the make of the vehicle: ",20) #varchar (20)
 	model = sqlFile.getString("Enter the model of the vehicle: ",20) #varchar (20)
-	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,0) #number (4,0)
+	year = sqlFile.getNumber("Enter the year of the vehicle: ",4,4) #number (4,0)
 	color = sqlFile.getString("Enter the color of the vehicle: ",10) #varchar(10)
 	vehicleType = None
 	while True:
@@ -111,7 +106,7 @@ def newVehicle(sql):
 	addOwner = True
 	while addOwner:
 		if not primaryDone:
-			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'ynYN')#char(1)
+			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,1,'ynYN').lower()#char(1)
 			if Primary_Ownership.lower() == 'y':
 				primaryDone = True
 		else:
@@ -127,11 +122,11 @@ def newVehicle(sql):
 		sql.execute(string)
 
 		while True:
-			addMore = input("Add another owner? (y/n): ")
-			if addMore.lower() == 'y':
+			addMore = getString("Add another owner? (y/n): ",1,1,"ynYN").lower()
+			if addMore == 'y':
 				addOwner = True
 				break
-			elif addMore.lower() =='n':
+			else:
 				if primaryDone == True:
 					addOwner = False
 					break
@@ -139,8 +134,6 @@ def newVehicle(sql):
 					print("Error: Need to enter a primary owner!")
 					addOwner = True
 					break
-			else:
-				print("Invalid input, please enter either the letter y or n")
 
 	print("New Vehicle Registered!")
 	print("\n")
@@ -185,6 +178,7 @@ def autoTrans(sql):
 				tryAgain = sqlFile.getString("Warning buyer doesn't exist! Create a new person? (y/n): ", 1, 1, "ynYN").lower()
 				if(tryAgain.lower() == "y"):
 					newPerson(sql, Buyer)
+					break
 				else:
 					tryAgain = sqlFile.getString("Do you want to quit? (y/n): ", 1, 1, "ynYN").lower()
 					if(tryAgain.lower() == "y"):
@@ -193,8 +187,10 @@ def autoTrans(sql):
 		if (x == buyerNum - 1) and (not primaryExists):
 			print("Automatically setting this to be the primary owner.")
 			primary = 'y'
-		else:
+		elif not primaryExists:
 			primary = sqlFile.getString("Is this owner the primary owner? ",1,1,'ynYN').lower()
+		else:
+			primary = 'n'
 		if primary.lower() == 'y':
 			 string = "insert into auto_sale values({:d},'{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'), {:.2f})"
 			 string = string.format(TransactionId, Seller, Buyer, Vehicle, Date, Price)
@@ -207,6 +203,8 @@ def autoTrans(sql):
 			 string = "insert into owner values('{:s}','{:s}','{:s}')"
 			 string = string.format(Buyer, Vehicle, 'n')
 			 sql.execute(string)
+
+	print("Auto Transaction Completed!")
 
 def licenceReg(sql):
 	string = "SELECT MAX(licence_no) FROM drive_licence"
@@ -458,13 +456,13 @@ def newPerson(sql, Sin=None):
 	Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
 	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
 	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
-	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF').lower() #char #contains (m or f)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,1,'mfMF').lower() #char #contains (m or f)
 	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
 	sql.execute(string.format(Sin,Name,Height,Weight,Eyecolor,Haircolor,Address,Gender,Birthday))
+	print('\n')
 	print("Person Added!")
-	print("\n")
 
 def unique(sql, table, conditionMessage):
 	string = "SELECT * FROM {:s} WHERE {:s}"
