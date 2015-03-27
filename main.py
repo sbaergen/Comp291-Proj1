@@ -122,7 +122,15 @@ def newVehicle(sql):
 
                 if unique(sql, "people p", "p.sin = '{:s}'".format(Owner)):
                         newPerson(sql, Owner)
-
+                
+                if not unique(sql, "owner o", "o.owner_id = '{:s}' and o.vehicle_id = '{:s}'".format(Owner, serial_no)):
+                        print("Already owns vehicle")
+                        choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+                        if choice == 'n':
+                                return None
+                        else:
+                                continue
+        
                 string = "insert into owner values ('{:s}','{:s}','{:s}')"
                 string = string.format(Owner, serial_no, Primary_Ownership)
                 sql.execute(string)
@@ -140,7 +148,6 @@ def newVehicle(sql):
                                         print("Error: Need to enter a primary owner!")
                                         addOwner = True
                                         break
-
         print("New Vehicle Registered!")
         print("\n")
 
@@ -223,7 +230,7 @@ def autoTrans(sql):
 # dependencies hold.
 def licenceReg(sql):
         string = "SELECT MAX(licence_no) FROM drive_licence"
-        Licence_no = eval(sql.exeAndFetch(string)[0][0]) + 1 #char(15)
+        Licence_no = str(eval(sql.exeAndFetch(string)[0][0]) + 1) #char(15)
         Person = None
         while True:
                 Person = sqlFile.getString("Enter the sin of the person: ",15,1) #char(15)
@@ -245,6 +252,18 @@ def licenceReg(sql):
 
         string = "insert into drive_licence (licence_no, sin, class, photo, issuing_date, expiring_date) values (:lno, :sin, :class, :pic, TO_DATE(:issue, 'YYYY-MM-DD'), TO_DATE(:exp, 'YYYY-MM-DD'))"
         sql.execute(string, {'lno':Licence_no, 'sin':Person, 'class':Class, 'pic':Picture, 'issue':Issuing_date, 'exp':Expiry_date})
+
+        while True:
+                Restriction = sqlFile.getNumber("Enter the restriction ID: ")
+                if unique(sql,"driving_condition c", "c_id = {:d}".format(Restriction)):
+                        print("Invalid restriction id")
+                        choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
+                        if choice == 'n':
+                                return None
+                else:
+                        break
+        string = "insert into restriction values ('{:s}', {:d})"
+        sql.execute(string.format(Licence_no, Restriction))
 
         print("Licence Registered!")
         print("\n")
@@ -307,14 +326,15 @@ def violationRec(sql):
 
 #This component is used to allow the user to select a search type
 def searchEngine(sql):
-    print("1.Personal Information Search")
-    print("2.Personal Violation Record")
-    print("3.Vehicle history")
-    print("quit (q)")
     choice = '0'
     invalid = False
 
     while (choice.lower() != 'q'):
+            print("\n")
+            print("1.Personal Information Search")
+            print("2.Personal Violation Record")
+            print("3.Vehicle history")
+            print("quit (q)")
             if invalid == False:
                     choice = input("Choose a search type or press 'q' to quit: ")
             else:
@@ -409,13 +429,11 @@ def search2(sql):
                 if len(assertion2) == 0:
                         print("\n")
                         print("Person does not exist")
-                        print("\n")
                         return None
 
         #Displays a separate result if the person is found but they have no tickets registered
         if len(Results) == 0:
                 print("No tickets found")
-                print("\n")
                 return None
 
         for result in Results:
@@ -427,7 +445,6 @@ def search2(sql):
                 print("Ticket Date: ", result[5])
                 print("Place: ", result[6])
                 print("Descriptions: ", result[7])
-                print("\n")
         return None
 
 def search3(sql):
@@ -439,7 +456,6 @@ def search3(sql):
         if len(assertion) == 0:
                 print("\n")
                 print("No vehicle found!")
-                print("\n")
                 return None
     #This Query must select the number of times a vehicle has been sold, its average sale price and the number of
     #incidents that it has been involved in given the serial_no of the vehicle
@@ -455,7 +471,6 @@ def search3(sql):
                         print("Amount of Sales: ", result1[0])
                         print("Average Sale Price: ", result1[1])
                         print("Amount of Infractions: ", result2[0])
-        print("\n")
         return None
 
 #Allows the input and addition of a complete person into the database
