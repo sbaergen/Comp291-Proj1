@@ -342,7 +342,7 @@ def search1(sql):
          #Allow for duplicate names
          #Not sure whether to present r_id or the actual description of the condition
         if len(licence_no) != 0:
-                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restrIction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
+                string = "SELECT p.name, d.licence_no, p.addr, p.birthday, d.class, r.r_id, d.expiring_date FROM people p, drive_licence d, restriction r WHERE d.licence_no = '{:s}' and p.sin = d.sin and d.licence_no = r.licence_no"
                 Results = (sql.exeAndFetch(string.format(licence_no)))
                 name = None
                 if len(Results) == 0:
