@@ -1,3 +1,4 @@
+import sys
 import getpass
 import sql as sqlFile
 
@@ -20,17 +21,23 @@ def main():
 			print("Oops, try again!")
 			continue
 
-	# We should ask for a file w/ create table statements
+	# Waring if no arguments are used
+	if(len(sys.argv) <= 2):
+		print("Waring: Not all arguents are being used!")
+		print("First argument creates tables.")
+		print("Second argument populates the data with insert statements.")
 
 	# Drop & Create Tables
-	print("Dropping / Creating Tables")
-	sql.executeFromFile("p1_setup.sql.txt")
-
-	# We should ask for a file w/ insert statements
+	if(len(sys.argv) >= 2):
+		print("Dropping / Creating Tables")
+		print("Using the argument " + str(sys.argv[1]))
+		sql.executeFromFile(str(sys.argv[1]))
 
 	# Populate tables
-	print("Populate Tables")
-	sql.executeFromFile("population.txt")
+	if(len(sys.argv) >= 3):
+		print("Populate Tables")
+		print("Using the argument " + str(sys.argv[2]))
+		sql.executeFromFile(str(sys.argv[2]))
 
 	print ("Welcome to the Alberta Auto Registration System!")
 	while(True):
