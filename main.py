@@ -79,7 +79,7 @@ Please Select from the following:
 def newVehicle(sql):
 	serial_no = None
 	while True:
-		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15)
+		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15,1)#char (15)
 		if unique(sql, "vehicle v", "v.serial_no = '{:s}'".format(serial_no)):
 			break
 		else:
@@ -109,7 +109,7 @@ def newVehicle(sql):
 		else:
 			Primary_Ownership = 'n'
 		#contains (y or n)
-		Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
+		Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15, 1) #char(15)
 		#UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 		if unique(sql, "people p", "p.sin = {:s}".format(Owner)):
 			newPerson(sql, Owner)
@@ -268,7 +268,7 @@ def violationRec(sql):
 
 	while True:
 		officer = sqlFile.getString("Enter the officer number: ",15) #char(15)
-		if unique(sql,"people p", "p.sin = '{:s}'".format(office)):
+		if unique(sql,"people p", "p.sin = '{:s}'".format(officer)):
 			print("Officer does not exist")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
@@ -292,7 +292,7 @@ def violationRec(sql):
 
 	#This simply inserts the ticket into our database
 	string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
-	string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
+	string = string.format(ticket_no,violator,vehicle,officer,typeTicket,date,place,descr)
 	sql.execute(string)
 
 	print("Violation Recorded!")
