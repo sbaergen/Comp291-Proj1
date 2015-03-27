@@ -87,7 +87,7 @@ Please Select from the following:
 def newVehicle(sql):
 	serial_no = None
 	while True:
-		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15)#char (15)
+		serial_no = sqlFile.getString("Enter serial_no of vehicle: ",15,1)#char (15)
 		if unique(sql, "vehicle v", "v.serial_no = '{:s}'".format(serial_no)):
 			break
 		else:
@@ -111,13 +111,13 @@ def newVehicle(sql):
 	addOwner = True
 	while addOwner:
 		if not primaryDone:
-			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,0,'ynYN')#char(1)
+			Primary_Ownership = sqlFile.getString("Is this person the primary owner of the vehicle? (y/n): ",1,1,'ynYN')#char(1)
 			if Primary_Ownership.lower() == 'y':
 				primaryDone = True
 		else:
 			Primary_Ownership = 'n'
 		#contains (y or n)
-		Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15) #char(15)
+		Owner = sqlFile.getString("Enter the owner id of the owner of the vehicle: ",15, 1) #char(15)
 		#UNIQUE SQL OWNER, VEHICLE_ID (serial_no)
 		if unique(sql, "people p", "p.sin = {:s}".format(Owner)):
 			newPerson(sql, Owner)
@@ -272,7 +272,7 @@ def violationRec(sql):
 
 	while True:
 		officer = sqlFile.getString("Enter the officer number: ",15) #char(15)
-		if unique(sql,"people p", "p.sin = '{:s}'".format(office)):
+		if unique(sql,"people p", "p.sin = '{:s}'".format(officer)):
 			print("Officer does not exist")
 			choice = sqlFile.getString("Try again? (y/n): ",1,1,"ynYN").lower()
 			if choice == 'n':
@@ -296,7 +296,7 @@ def violationRec(sql):
 
 	#This simply inserts the ticket into our database
 	string = "insert into ticket values({:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'),'{:s}','{:s}')"
-	string = string.format(ticket_no,violator,vehicle,office,typeTicket,date,place,descr)
+	string = string.format(ticket_no,violator,vehicle,officer,typeTicket,date,place,descr)
 	sql.execute(string)
 
 	print("Violation Recorded!")
@@ -457,8 +457,7 @@ def newPerson(sql, Sin=None):
 	Eyecolor = sqlFile.getString("Enter the eye color of the person: ",10) #varchar(10)
 	Haircolor = sqlFile.getString("Enter the hair color of the person: ",10) #varchar(10)
 	Address = sqlFile.getString("Enter the address of the person: ",50) #varchar2(50)
-	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF') #char #contains (m or f)
-	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,0,'mfMF').lower() #char #contains (m or f)
+	Gender = sqlFile.getString("Enter the gender of the person (m or f): ",1,1,'mfMF').lower() #char #contains (m or f)
 	Birthday =sqlFile.getDate("Enter the birthday of the person in form 'YYYY-MM-DD': ") #date
 
 	string = "Insert into people values ('{:s}','{:s}',{:d},{:d},'{:s}','{:s}','{:s}','{:s}',TO_DATE('{:s}', 'YYYY-MM-DD'))"
