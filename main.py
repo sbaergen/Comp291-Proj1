@@ -4,8 +4,8 @@ import sql as sqlFile
 # This will display the menu and handle input to the menu
 def main():
         print("Please login before proceeding.")
-        sql = None  # I don't want the sql obj to be local to the while loop
-        while(True):  # cont here
+        sql = None
+        while(True):
                 try:
                         user = input("User [%s]:" % getpass.getuser())
                         if not user:
